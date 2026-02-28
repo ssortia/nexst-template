@@ -1,0 +1,32 @@
+{
+  "name": "nexst-template",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "prettier": "^3.4.2",
+    "turbo": "latest",
+    "typescript": "^5.7.3"
+  },
+  "prettier": "@repo/prettier-config",
+  "packageManager": "pnpm@9.15.4",
+  "pnpm": {
+    "overrides": {
+      "chokidar": "^3.6.0"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+# Architecture Decision Records
+
+ADR (Architecture Decision Record) — короткий документ, фиксирующий архитектурное решение: что выбрали, почему, и какие у этого последствия.
+
+Подробнее о формате и правилах написания: [docs/DOCUMENTATION.md](../DOCUMENTATION.md#adr-architecture-decision-records).
+
+---
+
+## Индекс
+
+| № | Решение | Статус | Дата |
+|---|---------|--------|------|
+| [001](./001-monorepo-pnpm-turborepo.md) | Монорепо: pnpm workspaces + Turborepo | Принято | 2026-02-28 |
+| [002](./002-nestjs-fastify-swc.md) | NestJS: Fastify-адаптер + SWC-компилятор | Принято | 2026-02-28 |
+| [003](./003-nextauth-v5-credentials.md) | Аутентификация на фронте: next-auth v5 + Credentials | Принято | 2026-02-28 |
+| [004](./004-tailwind-v4.md) | CSS-фреймворк: Tailwind CSS v4 | Принято | 2026-02-28 |
+
+---
+
+## Добавить новый ADR
+
+1. Скопируй шаблон из [docs/DOCUMENTATION.md](../DOCUMENTATION.md#формат-adr)
+2. Создай файл `docs/adr/NNN-короткое-название.md` (следующий порядковый номер)
+3. Добавь запись в таблицу выше
+4. Если решение заменяет старое — обнови статус старого ADR
