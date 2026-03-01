@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import type { User } from '@repo/database';
+import type { User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
 import { getEnv } from '../config/env';

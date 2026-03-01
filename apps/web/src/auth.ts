@@ -8,6 +8,7 @@ const loginSchema = z.object({
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   providers: [
     Credentials({
       name: 'credentials',
@@ -19,8 +20,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const parsed = loginSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
+        const apiUrl = process.env['API_URL'] ?? process.env['NEXT_PUBLIC_API_URL'];
+
         try {
-          const res = await fetch(`${process.env['NEXT_PUBLIC_API_URL']}/auth/login`, {
+          const res = await fetch(`${apiUrl}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(parsed.data),
@@ -31,7 +34,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           const data = (await res.json()) as { accessToken: string; refreshToken: string };
 
           // Fetch user profile
-          const userRes = await fetch(`${process.env['NEXT_PUBLIC_API_URL']}/users/me`, {
+          const userRes = await fetch(`${apiUrl}/users/me`, {
             headers: { Authorization: `Bearer ${data.accessToken}` },
           });
 

@@ -1,9 +1,0 @@
-{
-  "extends": "@repo/typescript-config/nextjs.json",
-  "compilerOptions": {
-    "rootDir": ".",
-    "noEmit": true
-  },
-  "include": ["src", "tailwind.preset.ts"],
-  "exclude": ["node_modules"]
-}

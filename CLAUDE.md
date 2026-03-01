@@ -38,9 +38,10 @@ pnpm --filter @repo/web test
 pnpm --filter @repo/api test
 
 # Database
-pnpm --filter @repo/database db:migrate   # apply migrations
-pnpm --filter @repo/database db:seed      # seed the database
-pnpm --filter @repo/database db:studio    # open Prisma Studio
+pnpm --filter @repo/api db:generate  # generate Prisma Client
+pnpm --filter @repo/api db:migrate   # apply migrations
+pnpm --filter @repo/api db:seed      # seed the database
+pnpm --filter @repo/api db:studio    # open Prisma Studio
 
 # Docker (local infrastructure: postgres, redis)
 docker compose up -d
@@ -53,7 +54,7 @@ docker compose down
 
 - `apps/api` — NestJS backend (Fastify, SWC, JWT auth, Swagger)
 - `apps/web` — Next.js 15 frontend (App Router, next-auth v5, shadcn/ui)
-- `packages/` — общие пакеты: `ui`, `types`, `database`, `config/{eslint,typescript,prettier}`
+- `packages/` — общие пакеты: `ui`, `types`, `config/{eslint,typescript,prettier}`
 - `docker/` — Dockerfile-ы и nginx.conf
 - `.github/workflows/ci.yml` — CI: lint → typecheck → test → build
 
@@ -78,11 +79,10 @@ docker compose down
 - Client state: `zustand`
 - Forms: `react-hook-form` + `zod`
 - Auth: `next-auth` v5
+- UI components: shadcn/ui in `src/components/ui/`, utilities in `src/lib/utils.ts`
 
 ### Shared Packages
 - `@repo/types` — Zod schemas and TypeScript interfaces shared between API and web; the source of truth for data shapes
-- `@repo/ui` — shadcn components built on Tailwind v4; apps import from here instead of duplicating components
-- `@repo/database` — single Prisma schema consumed by the API; web never imports this package directly
 
 ### TypeScript
 - `packages/config/typescript/base.json` is the root tsconfig; each app/package extends it
@@ -99,7 +99,7 @@ See `.env.example` at the root. Each app reads its own subset:
 
 | Variable | Used by |
 |---|---|
-| `DATABASE_URL` | api, database |
+| `DATABASE_URL` | api |
 | `REDIS_URL` | api |
 | `JWT_SECRET`, `JWT_EXPIRES_IN` | api |
 | `NEXTAUTH_SECRET`, `NEXTAUTH_URL` | web |

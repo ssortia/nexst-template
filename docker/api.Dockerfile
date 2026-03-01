@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # ---- deps stage ----
@@ -6,7 +6,6 @@ FROM base AS deps
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY apps/api/package.json ./apps/api/
-COPY packages/database/package.json ./packages/database/
 COPY packages/types/package.json ./packages/types/
 COPY packages/config/typescript/package.json ./packages/config/typescript/
 RUN pnpm install --frozen-lockfile
@@ -16,23 +15,18 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
-COPY --from=deps /app/packages/database/node_modules ./packages/database/node_modules
 COPY . .
 RUN pnpm --filter @repo/types build
-RUN pnpm --filter @repo/database db:generate
-RUN pnpm --filter @repo/database build
+RUN pnpm --filter @repo/api db:generate
 RUN pnpm --filter @repo/api build
 
 # ---- runner stage ----
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
-COPY --from=builder /app/packages/database/node_modules ./packages/database/node_modules
-COPY --from=builder /app/packages/database/package.json ./packages/database/package.json
-COPY --from=builder /app/packages/database/dist ./packages/database/dist
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 
 EXPOSE 3001

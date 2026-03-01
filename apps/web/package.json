@@ -12,9 +12,12 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
+    "@radix-ui/react-label": "^2.1.1",
     "@repo/types": "workspace:*",
-    "@repo/ui": "workspace:*",
     "@ssortia/shadcn-zod-bridge": "^0.1.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.0",
     "@t3-oss/env-nextjs": "^0.13.10",
     "@tanstack/react-query": "^5.66.0",
     "next": "^15.1.6",

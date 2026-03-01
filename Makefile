@@ -19,13 +19,13 @@ test:
 	pnpm test
 
 db-migrate:
-	pnpm --filter @repo/database db:migrate
+	pnpm --filter @repo/api db:migrate
 
 db-seed:
-	pnpm --filter @repo/database db:seed
+	pnpm --filter @repo/api db:seed
 
 db-studio:
-	pnpm --filter @repo/database db:studio
+	pnpm --filter @repo/api db:studio
 
 docker-up:
 	docker compose up -d

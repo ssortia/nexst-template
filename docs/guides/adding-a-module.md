@@ -44,7 +44,7 @@ model User {
 ### 2. Создать и применить миграцию
 
 ```bash
-pnpm --filter @repo/database db:migrate
+pnpm --filter @repo/api db:migrate
 # Имя миграции: add-posts
 ```
 

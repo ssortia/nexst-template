@@ -2,34 +2,20 @@
 
 import { useState } from 'react';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from '@repo/ui';
+import { TextField, ZodForm } from '@ssortia/shadcn-zod-bridge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { LoginDtoSchema } from '@repo/types';
+import type { LoginDto } from '@repo/types';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-  });
-
-  async function onSubmit(data: LoginFormValues) {
-    setError(null);
+  async function onSubmit(data: LoginDto) {
+    setServerError(null);
 
     const result = await signIn('credentials', {
       email: data.email,
@@ -38,7 +24,7 @@ export function LoginForm() {
     });
 
     if (result?.error) {
-      setError('Invalid email or password');
+      setServerError('Неверный email или пароль');
       return;
     }
 
@@ -49,42 +35,18 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Sign in</CardTitle>
-        <CardDescription>Enter your email and password to access the dashboard</CardDescription>
+        <CardTitle>Вход</CardTitle>
+        <CardDescription>Введите email и пароль для доступа</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="admin@example.com"
-              {...register('email')}
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email.message}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              {...register('password')}
-            />
-            {errors.password && (
-              <p className="text-sm text-destructive">{errors.password.message}</p>
-            )}
-          </div>
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
+        <ZodForm schema={LoginDtoSchema} onSubmit={onSubmit} className="space-y-4">
+          <TextField name="email" label="Email" type="email" placeholder="admin@example.com" required />
+          <TextField name="password" label="Пароль" type="password" placeholder="••••••••" required />
+          {serverError && (
+            <p className="text-sm text-destructive">{serverError}</p>
           )}
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? 'Signing in...' : 'Sign in'}
-          </Button>
-        </form>
+          <Button type="submit" className="w-full">Войти</Button>
+        </ZodForm>
       </CardContent>
     </Card>
   );

@@ -77,16 +77,16 @@ pnpm --filter @repo/api test:e2e   # e2e тесты API (требует БД)
 
 ```bash
 # Создать новую миграцию после изменения schema.prisma
-pnpm --filter @repo/database db:migrate
+pnpm --filter @repo/api db:migrate
 
 # Применить миграции без создания новых (CI / продакшен)
-pnpm --filter @repo/database db:migrate:deploy
+pnpm --filter @repo/api db:migrate:deploy
 
 # Заполнить тестовыми данными
-pnpm --filter @repo/database db:seed
+pnpm --filter @repo/api db:seed
 
 # Открыть Prisma Studio (GUI для БД)
-pnpm --filter @repo/database db:studio
+pnpm --filter @repo/api db:studio
 ```
 
 ---
@@ -155,8 +155,7 @@ Middleware (`src/middleware.ts`) защищает все маршруты кро
 | Пакет | Что экспортирует | Кто использует |
 |---|---|---|
 | `@repo/types` | Zod-схемы и TypeScript-типы для DTO | API, Web |
-| `@repo/ui` | shadcn/ui компоненты, `cn()` утилита | Web |
-| `@repo/database` | PrismaClient, типы моделей | API |
+| `src/components/ui` | shadcn/ui компоненты, `cn()` утилита | Внутри `apps/web` |
 | `@repo/typescript-config` | tsconfig базы (base, nestjs, nextjs) | Все |
 | `@repo/eslint-config` | ESLint конфиги | Все |
 | `@repo/prettier-config` | Prettier конфиг | Все |

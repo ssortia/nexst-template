@@ -6,7 +6,7 @@
 
 | Инструмент | Минимальная версия | Проверить |
 |---|---|---|
-| Node.js | 20 | `node -v` |
+| Node.js | 22 | `node -v` |
 | pnpm | 9 | `pnpm -v` |
 | Docker | 24 | `docker -v` |
 | Git | любая | `git -v` |
@@ -63,8 +63,8 @@ pnpm install
 ### 5. Применить миграции и сгенерировать Prisma Client
 
 ```bash
-pnpm --filter @repo/database db:generate
-pnpm --filter @repo/database db:migrate
+pnpm --filter @repo/api db:generate
+pnpm --filter @repo/api db:migrate
 ```
 
 При первом запуске Prisma попросит имя миграции — введи, например, `init`.
@@ -72,7 +72,7 @@ pnpm --filter @repo/database db:migrate
 ### 6. Заполнить базу тестовыми данными
 
 ```bash
-pnpm --filter @repo/database db:seed
+pnpm --filter @repo/api db:seed
 ```
 
 Создаётся пользователь: `admin@example.com` / `admin123456`
@@ -106,7 +106,7 @@ pnpm dev
 |---|---|---|
 | `Error: Cannot connect to database` | PostgreSQL не запущен | `docker compose up -d`, проверить `docker compose ps` |
 | `pnpm: command not found` | pnpm не установлен | `npm install -g pnpm` |
-| `Prisma Client not generated` | Пропущен `db:generate` | `pnpm --filter @repo/database db:generate` |
+| `Prisma Client not generated` | Пропущен `db:generate` | `pnpm --filter @repo/api db:generate` |
 | Порт 3001 занят | Другой процесс на порту | `lsof -i :3001`, остановить процесс или изменить `PORT` в `.env` |
 | Логин не работает, ошибка 401 | Не применены миграции или не запущен seed | Шаги 5-6 выше |
 | `NEXTAUTH_SECRET` ошибка | Пустая или короткая строка в `.env` | Сгенерировать: `openssl rand -base64 32` |
