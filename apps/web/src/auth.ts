@@ -2,6 +2,8 @@ import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
 
+import type { Role } from '@repo/types';
+
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
@@ -40,11 +42,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           if (!userRes.ok) return null;
 
-          const user = (await userRes.json()) as { id: string; email: string };
+          const user = (await userRes.json()) as { id: string; email: string; role: Role };
 
           return {
             id: user.id,
             email: user.email,
+            role: user.role,
             accessToken: data.accessToken,
             refreshToken: data.refreshToken,
           };
@@ -59,11 +62,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token['accessToken'] = (user as { accessToken?: string }).accessToken;
         token['refreshToken'] = (user as { refreshToken?: string }).refreshToken;
+        token['role'] = (user as { role?: Role }).role;
       }
       return token;
     },
     async session({ session, token }) {
       session.user.id = token.sub ?? '';
+      session.user.role = (token['role'] as Role) ?? 'USER';
       (session as { accessToken?: string }).accessToken = token['accessToken'] as string;
       return session;
     },
