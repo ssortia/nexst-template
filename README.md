@@ -11,6 +11,7 @@
 - **JWT-аутентификация** — login / refresh / logout с хранением хэша refresh-токена в БД
 - **Web** — Next.js 15 App Router с защищёнными маршрутами через next-auth v5
 - **UI** — shadcn/ui компоненты в `apps/web/src/components/ui` на Tailwind CSS v4
+- **Тёмная тема** — next-themes с переключателем в хедере, сохранение в localStorage, поддержка системных настроек
 - **Общие типы** — Zod-схемы в `@repo/types`, используемые и на API, и на фронте
 - **БД** — Prisma 6 + PostgreSQL, миграции и seed из коробки
 - **Строгий TypeScript** — strict mode везде, включая `noUncheckedIndexedAccess`
@@ -22,20 +23,20 @@
 
 ## Стек
 
-| Категория | Технология | Версия |
-|---|---|---|
-| Пакетный менеджер | pnpm | 9+ |
-| Оркестрация сборок | Turborepo | latest |
-| Backend | NestJS | 11 |
-| HTTP-адаптер | Fastify | — |
-| Frontend | Next.js | 15 |
-| Аутентификация (web) | next-auth | v5 (beta) |
-| ORM | Prisma | 6 |
-| База данных | PostgreSQL | 16 |
-| UI-компоненты | shadcn/ui + Tailwind CSS v4 | — |
-| Валидация | Zod + class-validator | — |
-| TypeScript | — | 5.7 |
-| Node.js | — | 22+ |
+| Категория            | Технология                  | Версия    |
+| -------------------- | --------------------------- | --------- |
+| Пакетный менеджер    | pnpm                        | 9+        |
+| Оркестрация сборок   | Turborepo                   | latest    |
+| Backend              | NestJS                      | 11        |
+| HTTP-адаптер         | Fastify                     | —         |
+| Frontend             | Next.js                     | 15        |
+| Аутентификация (web) | next-auth                   | v5 (beta) |
+| ORM                  | Prisma                      | 6         |
+| База данных          | PostgreSQL                  | 16        |
+| UI-компоненты        | shadcn/ui + Tailwind CSS v4 | —         |
+| Валидация            | Zod + class-validator       | —         |
+| TypeScript           | —                           | 5.7       |
+| Node.js              | —                           | 22+       |
 
 ---
 
@@ -65,6 +66,7 @@ pnpm dev
 ```
 
 После запуска:
+
 - Web: http://localhost:3000
 - API: http://localhost:3001
 - Swagger: http://localhost:3001/api/docs
@@ -121,15 +123,15 @@ docker compose down                         # остановить
 
 ## Документация
 
-| Документ | Описание |
-|---|---|
-| [docs/DOCUMENTATION.md](./docs/DOCUMENTATION.md) | Правила ведения документации в проекте |
-| [docs/guides/getting-started.md](./docs/guides/getting-started.md) | Локальная установка шаг за шагом |
-| [docs/guides/development.md](./docs/guides/development.md) | Ежедневный workflow разработчика |
-| [docs/guides/adding-a-module.md](./docs/guides/adding-a-module.md) | Добавление новой бизнес-сущности |
-| [docs/guides/deployment.md](./docs/guides/deployment.md) | Деплой в продакшен |
-| [docs/adr/](./docs/adr/) | Архитектурные решения (ADR) |
-| [CLAUDE.md](./CLAUDE.md) | Инструкции для AI-ассистента |
+| Документ                                                           | Описание                               |
+| ------------------------------------------------------------------ | -------------------------------------- |
+| [docs/DOCUMENTATION.md](./docs/DOCUMENTATION.md)                   | Правила ведения документации в проекте |
+| [docs/guides/getting-started.md](./docs/guides/getting-started.md) | Локальная установка шаг за шагом       |
+| [docs/guides/development.md](./docs/guides/development.md)         | Ежедневный workflow разработчика       |
+| [docs/guides/adding-a-module.md](./docs/guides/adding-a-module.md) | Добавление новой бизнес-сущности       |
+| [docs/guides/deployment.md](./docs/guides/deployment.md)           | Деплой в продакшен                     |
+| [docs/adr/](./docs/adr/)                                           | Архитектурные решения (ADR)            |
+| [CLAUDE.md](./CLAUDE.md)                                           | Инструкции для AI-ассистента           |
 
 ---
 

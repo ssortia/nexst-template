@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 
 import { RoleProvider } from '@/components/auth/role-provider';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 import { auth, signOut } from '../../auth';
 
@@ -13,12 +14,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <RoleProvider role={session.user.role}>
-      <div className="min-h-screen bg-background">
+      <div className="bg-background min-h-screen">
         <header className="border-b">
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
             <h1 className="text-xl font-semibold">NexST</h1>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-muted-foreground">{session.user?.email}</span>
+              <ThemeToggle />
+              <span className="text-muted-foreground text-sm">{session.user?.email}</span>
               <form
                 action={async () => {
                   'use server';
@@ -27,7 +29,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               >
                 <button
                   type="submit"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-muted-foreground hover:text-foreground text-sm transition-colors"
                 >
                   Выйти
                 </button>
