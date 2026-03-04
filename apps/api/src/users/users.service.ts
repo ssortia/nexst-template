@@ -1,50 +1,39 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import type { Role, User } from '@prisma/client';
 
-import { PrismaService } from '../prisma/prisma.service';
+import type { PublicUser } from './users.repository';
+import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly usersRepository: UsersRepository) {}
 
-  async findById(id: string) {
-    return this.prisma.user.findUnique({ where: { id } });
+  findById(id: string): Promise<User | null> {
+    return this.usersRepository.findById(id);
   }
 
-  async findByEmail(email: string) {
-    return this.prisma.user.findUnique({ where: { email } });
+  findByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findByEmail(email);
   }
 
-  async me(userId: string) {
-    return this.prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+  me(userId: string): Promise<PublicUser | null> {
+    return this.usersRepository.findOnePublic(userId);
   }
 
-  async findAll() {
-    return this.prisma.user.findMany({
-      select: { id: true, email: true, role: true, createdAt: true, updatedAt: true },
-      orderBy: { createdAt: 'asc' },
-    });
+  findAll(): Promise<PublicUser[]> {
+    return this.usersRepository.findAllPublic();
   }
 
-  async create(email: string, hashedPassword: string): Promise<User> {
-    return this.prisma.user.create({ data: { email, password: hashedPassword } });
+  create(email: string, hashedPassword: string): Promise<User> {
+    return this.usersRepository.create({ email, password: hashedPassword });
   }
 
-  async updateRole(callerId: string, targetId: string, role: Role) {
+  async updateRole(callerId: string, targetId: string, role: Role): Promise<PublicUser> {
     if (callerId === targetId) throw new ForbiddenException('Cannot change your own role');
-    return this.prisma.user.update({
-      where: { id: targetId },
-      data: { role },
-      select: { id: true, email: true, role: true, createdAt: true, updatedAt: true },
-    });
+    return this.usersRepository.updateRole(targetId, role);
+  }
+
+  updateRefreshToken(userId: string, hashedToken: string | null): Promise<void> {
+    return this.usersRepository.updateRefreshToken(userId, hashedToken);
   }
 }

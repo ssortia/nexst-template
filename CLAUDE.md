@@ -2,6 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Придерживайся следующих правил:
+
+1. Описывай что ты делаешь
+2. Используй для ответов РУССКИЙ язык
+3. Делай все качественно архитектурно (и в соответствии с общепринятыми стандартами применяемых технологий)
+4. Комментарии к коду пиши на русском языке
+5. Когда предлагаешь внести какое-то изминение в код кратко пиши что делаешь и для чего
+
 ## Project Overview
 
 This is a **monorepo template** for full-stack projects using NestJS (API) + Next.js (web) with shadcn/ui. It is a starter template — the goal is to scaffold a production-ready foundation, not a running application.
@@ -61,6 +69,7 @@ docker compose down
 ## Architecture Decisions
 
 ### API (`apps/api`)
+
 - Uses **Fastify** adapter (not Express) for performance
 - Uses **SWC** compiler (not `tsc`) for faster builds
 - Global `ValidationPipe` with `class-validator` + `class-transformer`
@@ -71,6 +80,7 @@ docker compose down
 - Module structure: `auth`, `users`, `prisma` (core modules pre-configured)
 
 ### Web (`apps/web`)
+
 - Next.js 15 with **App Router** and `src/` directory
 - `@/*` path alias resolves to `src/`
 - Turbopack enabled in dev mode
@@ -82,13 +92,16 @@ docker compose down
 - UI components: shadcn/ui in `src/components/ui/`, utilities in `src/lib/utils.ts`
 
 ### Shared Packages
+
 - `@repo/types` — Zod schemas and TypeScript interfaces shared between API and web; the source of truth for data shapes
 
 ### TypeScript
+
 - `packages/config/typescript/base.json` is the root tsconfig; each app/package extends it
 - Strict mode enabled everywhere
 
 ### ESLint
+
 - ESLint v9 flat config
 - Separate rule sets for NestJS (Node) and Next.js (browser/React) contexts
 - `eslint-plugin-import` enforces import order
@@ -97,13 +110,13 @@ docker compose down
 
 See `.env.example` at the root. Each app reads its own subset:
 
-| Variable | Used by |
-|---|---|
-| `DATABASE_URL` | api |
-| `REDIS_URL` | api |
-| `JWT_SECRET`, `JWT_EXPIRES_IN` | api |
-| `NEXTAUTH_SECRET`, `NEXTAUTH_URL` | web |
-| `NEXT_PUBLIC_API_URL` | web |
+| Variable                          | Used by |
+| --------------------------------- | ------- |
+| `DATABASE_URL`                    | api     |
+| `REDIS_URL`                       | api     |
+| `JWT_SECRET`, `JWT_EXPIRES_IN`    | api     |
+| `NEXTAUTH_SECRET`, `NEXTAUTH_URL` | web     |
+| `NEXT_PUBLIC_API_URL`             | web     |
 
 ## Документация
 

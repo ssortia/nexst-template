@@ -9,7 +9,6 @@ import type { Role, User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
 import { getEnv } from '../config/env';
-import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
@@ -17,7 +16,6 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    private prisma: PrismaService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
@@ -64,11 +62,8 @@ export class AuthService {
     return tokens;
   }
 
-  async logout(userId: string) {
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { refreshToken: null },
-    });
+  async logout(userId: string): Promise<void> {
+    await this.usersService.updateRefreshToken(userId, null);
   }
 
   private async generateTokens(userId: string, email: string, role: Role) {
@@ -89,12 +84,9 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  private async updateRefreshToken(userId: string, refreshToken: string) {
+  private async updateRefreshToken(userId: string, refreshToken: string): Promise<void> {
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { refreshToken: hashedRefreshToken },
-    });
+    await this.usersService.updateRefreshToken(userId, hashedRefreshToken);
   }
 }
 
