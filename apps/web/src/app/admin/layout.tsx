@@ -6,14 +6,16 @@ import { ThemeToggle } from '@/components/theme-toggle';
 
 import { auth, signOut } from '../../auth';
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
 
   if (!session || session.error === 'RefreshAccessTokenError') {
     redirect('/login');
   }
 
-  const isAdmin = session.user.role === 'ADMIN';
+  if (session.user.role !== 'ADMIN') {
+    redirect('/');
+  }
 
   return (
     <RoleProvider role={session.user.role}>
@@ -21,15 +23,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <header className="border-b">
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
             <div className="flex items-center gap-6">
-              <h1 className="text-xl font-semibold">NexST</h1>
-              {isAdmin && (
-                <Link
-                  href="/admin/users"
-                  className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-                >
-                  Пользователи
-                </Link>
-              )}
+              <Link href="/" className="text-xl font-semibold">
+                NexST
+              </Link>
+              <Link
+                href="/admin/users"
+                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+              >
+                Пользователи
+              </Link>
             </div>
             <div className="flex items-center gap-4">
               <ThemeToggle />

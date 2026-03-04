@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   UnauthorizedException,
@@ -31,6 +32,14 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  async register(email: string, password: string) {
+    const existing = await this.usersService.findByEmail(email);
+    if (existing) throw new ConflictException('Email already in use');
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await this.usersService.create(email, hashedPassword);
+    return this.login(user);
   }
 
   async login(user: User) {

@@ -5,6 +5,7 @@ import type { User } from '@prisma/client';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 
@@ -12,6 +13,13 @@ import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Register a new user' })
+  async register(@Body() dto: RegisterDto) {
+    return this.authService.register(dto.email, dto.password);
+  }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
