@@ -1,7 +1,7 @@
 import type { User } from '@repo/types';
 
+import { usersApi } from '../../../api/users.api';
 import { auth } from '../../../auth';
-import { api } from '../../../lib/api';
 
 import { RoleSelect } from './role-select';
 
@@ -12,7 +12,7 @@ export default async function AdminUsersPage() {
   let users: User[] = [];
   let error: string | null = null;
   try {
-    users = await api.get<User[]>('/users', { accessToken });
+    users = await usersApi.list(accessToken);
   } catch (err) {
     error = err instanceof Error ? err.message : 'Не удалось загрузить пользователей';
   }

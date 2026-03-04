@@ -1,9 +1,22 @@
-const API_URL =
-  process.env['API_URL'] ?? process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:3001';
+import { env } from './env';
+
+// На сервере — API_URL (внутренняя сеть/docker), на клиенте — NEXT_PUBLIC_API_URL
+const API_BASE = typeof window === 'undefined' ? env.API_URL : env.NEXT_PUBLIC_API_URL;
 
 type RequestOptions = RequestInit & {
   accessToken?: string;
 };
+
+/** Типизированная HTTP-ошибка со статус-кодом для удобной обработки в UI. */
+export class ApiError extends Error {
+  constructor(
+    public readonly status: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
 
 async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { accessToken, ...fetchOptions } = options;
@@ -14,14 +27,14 @@ async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<
     ...fetchOptions.headers,
   };
 
-  const res = await fetch(`${API_URL}${path}`, {
+  const res = await fetch(`${API_BASE}${path}`, {
     ...fetchOptions,
     headers,
   });
 
   if (!res.ok) {
     const error = await res.text();
-    throw new Error(error || `HTTP ${res.status}`);
+    throw new ApiError(res.status, error || `HTTP ${res.status}`);
   }
 
   if (res.status === 204) {

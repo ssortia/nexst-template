@@ -4,6 +4,9 @@ import { z } from 'zod';
 
 import type { Role } from '@repo/types';
 
+import { authApi } from './api/auth.api';
+import { usersApi } from './api/users.api';
+
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
@@ -33,34 +36,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const parsed = loginSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
-        const apiUrl = process.env['API_URL'] ?? process.env['NEXT_PUBLIC_API_URL'];
-
         try {
-          const res = await fetch(`${apiUrl}/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(parsed.data),
-          });
-
-          if (!res.ok) return null;
-
-          const data = (await res.json()) as { accessToken: string; refreshToken: string };
-
-          // Fetch user profile
-          const userRes = await fetch(`${apiUrl}/users/me`, {
-            headers: { Authorization: `Bearer ${data.accessToken}` },
-          });
-
-          if (!userRes.ok) return null;
-
-          const user = (await userRes.json()) as { id: string; email: string; role: Role };
+          const tokens = await authApi.login(parsed.data);
+          const user = await usersApi.me(tokens.accessToken);
 
           return {
             id: user.id,
             email: user.email,
             role: user.role,
-            accessToken: data.accessToken,
-            refreshToken: data.refreshToken,
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
           };
         } catch {
           return null;
@@ -79,29 +64,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return token;
       }
 
-      // Return as-is if still valid (30s buffer before expiry)
+      // Возвращаем токен без изменений, если он ещё действителен (буфер 30 сек)
       const expiry = token['accessTokenExpiry'] as number;
       if (expiry && Date.now() < expiry - 30_000) {
         return token;
       }
 
-      // Access token expired — try to refresh
-      const apiUrl = process.env['API_URL'] ?? process.env['NEXT_PUBLIC_API_URL'];
+      // Access token истёк — пробуем обновить через refresh token
       try {
-        const res = await fetch(`${apiUrl}/auth/refresh`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ refreshToken: token['refreshToken'] }),
-        });
-
-        if (!res.ok) {
-          return { ...token, error: 'RefreshAccessTokenError' as const };
-        }
-
-        const data = (await res.json()) as { accessToken: string; refreshToken: string };
-        token['accessToken'] = data.accessToken;
-        token['refreshToken'] = data.refreshToken;
-        token['accessTokenExpiry'] = getJwtExpiry(data.accessToken);
+        const tokens = await authApi.refresh(token['refreshToken'] as string);
+        token['accessToken'] = tokens.accessToken;
+        token['refreshToken'] = tokens.refreshToken;
+        token['accessTokenExpiry'] = getJwtExpiry(tokens.accessToken);
         delete token['error'];
         return token;
       } catch {
