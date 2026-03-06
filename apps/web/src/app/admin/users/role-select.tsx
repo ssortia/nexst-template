@@ -1,10 +1,8 @@
 'use client';
 
-import { useTransition } from 'react';
-
 import type { Role } from '@repo/types';
 
-import { updateUserRole } from './actions';
+import { useUpdateRole } from '../../../hooks/use-users';
 
 interface RoleSelectProps {
   userId: string;
@@ -13,7 +11,7 @@ interface RoleSelectProps {
 }
 
 export function RoleSelect({ userId, currentRole, currentAdminId }: RoleSelectProps) {
-  const [isPending, startTransition] = useTransition();
+  const { mutate, isPending } = useUpdateRole();
   const isSelf = userId === currentAdminId;
 
   return (
@@ -22,7 +20,7 @@ export function RoleSelect({ userId, currentRole, currentAdminId }: RoleSelectPr
       disabled={isSelf || isPending}
       onChange={(e) => {
         const role = e.target.value as Role;
-        startTransition(() => void updateUserRole(userId, role));
+        mutate({ userId, role });
       }}
       className="border-input bg-background focus:ring-ring rounded-md border px-3 py-1.5 text-sm focus:ring-2 disabled:opacity-50"
     >

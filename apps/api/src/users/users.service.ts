@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import type { Role, User } from '@prisma/client';
 
+import type { ListUsersQueryDto } from './dto/list-users-query.dto';
 import type { PublicUser } from './users.repository';
 import { UsersRepository } from './users.repository';
 
@@ -20,8 +21,8 @@ export class UsersService {
     return this.usersRepository.findOnePublic(userId);
   }
 
-  findAll(): Promise<PublicUser[]> {
-    return this.usersRepository.findAllPublic();
+  findAll(query?: ListUsersQueryDto): Promise<PublicUser[]> {
+    return this.usersRepository.findAllPublic(query);
   }
 
   create(email: string, hashedPassword: string): Promise<User> {

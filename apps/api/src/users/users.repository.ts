@@ -6,6 +6,8 @@ import type { BaseModelDelegate } from '../common/repository/base.repository';
 import { BaseRepository } from '../common/repository/base.repository';
 import { PrismaService } from '../prisma/prisma.service';
 
+import type { ListUsersQueryDto } from './dto/list-users-query.dto';
+
 const PUBLIC_SELECT = {
   id: true,
   email: true,
@@ -48,8 +50,24 @@ export class UsersRepository extends BaseRepository<
     return this.prisma.user.findUnique({ where: { id }, select: PUBLIC_SELECT });
   }
 
-  findAllPublic(): Promise<PublicUser[]> {
-    return this.prisma.user.findMany({ select: PUBLIC_SELECT, orderBy: { createdAt: 'asc' } });
+  findAllPublic(query?: ListUsersQueryDto): Promise<PublicUser[]> {
+    const where: Prisma.UserWhereInput = {};
+
+    if (query?.email) {
+      where.email = { contains: query.email, mode: 'insensitive' };
+    }
+    if (query?.role) {
+      where.role = query.role;
+    }
+
+    const sortBy = query?.sortBy ?? 'createdAt';
+    const sortOrder = query?.sortOrder ?? 'asc';
+
+    return this.prisma.user.findMany({
+      select: PUBLIC_SELECT,
+      where,
+      orderBy: { [sortBy]: sortOrder },
+    });
   }
 
   updateRole(id: string, role: Role): Promise<PublicUser> {

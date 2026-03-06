@@ -5,14 +5,16 @@ import { useSession } from 'next-auth/react';
 
 import type { Role } from '@repo/types';
 
+import type { ListUsersParams } from '../api/users.api';
 import { usersApi } from '../api/users.api';
 
-/** Хук для получения списка пользователей (только для ADMIN). */
-export function useUsers() {
+/** Хук для получения списка пользователей с фильтрацией и сортировкой (только для ADMIN). */
+export function useUsers(params?: ListUsersParams) {
   const { data: session } = useSession();
   return useQuery({
-    queryKey: ['users'],
-    queryFn: () => usersApi.list(session!.accessToken!),
+    // params входит в ключ — при смене фильтров/сортировки запрос перезапускается
+    queryKey: ['users', params],
+    queryFn: () => usersApi.list(session!.accessToken!, params),
     enabled: !!session?.accessToken,
   });
 }
@@ -24,6 +26,7 @@ export function useUpdateRole() {
   return useMutation({
     mutationFn: ({ userId, role }: { userId: string; role: Role }) =>
       usersApi.updateRole(userId, role, session!.accessToken!),
+    // Инвалидируем все запросы users (независимо от параметров)
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
   });
 }

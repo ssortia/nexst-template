@@ -5,6 +5,8 @@ const API_BASE = typeof window === 'undefined' ? env.API_URL : env.NEXT_PUBLIC_A
 
 type RequestOptions = RequestInit & {
   accessToken?: string;
+  /** Query-параметры для GET-запросов. Undefined-значения игнорируются. */
+  params?: Record<string, string | undefined>;
 };
 
 /** Типизированная HTTP-ошибка со статус-кодом для удобной обработки в UI. */
@@ -19,7 +21,16 @@ export class ApiError extends Error {
 }
 
 async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { accessToken, ...fetchOptions } = options;
+  const { accessToken, params, ...fetchOptions } = options;
+
+  if (params) {
+    const search = new URLSearchParams();
+    for (const [key, value] of Object.entries(params)) {
+      if (value !== undefined) search.set(key, value);
+    }
+    const qs = search.toString();
+    if (qs) path = `${path}?${qs}`;
+  }
 
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
