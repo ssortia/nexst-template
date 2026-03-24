@@ -18,6 +18,7 @@ ADR (Architecture Decision Record) — короткий документ, фик
 | [006](./006-dark-mode-next-themes.md)   | Тёмная тема: next-themes + class-based               | Принято | 2026-03-03 |
 | [007](./007-repository-layer.md)        | Слой репозиториев в API                              | Принято | 2026-03-04 |
 | [008](./008-frontend-api-client.md)     | Архитектура API-клиента на фронтенде                 | Принято | 2026-03-04 |
+| [009](./009-gate-layer.md)              | Gate — слой интеграции с внешними сервисами          | Принято | 2026-03-24 |
 
 ---
 
