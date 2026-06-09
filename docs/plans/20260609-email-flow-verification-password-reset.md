@@ -206,10 +206,10 @@
 
 - Create: `apps/api/test/email-flow.e2e-spec.ts`
 
-- [ ] e2e: регистрация → перехват токена (json-транспорт/БД) → verify-email → профиль показывает `emailVerified: true`
-- [ ] e2e: forgot-password (несуществующий и существующий email дают одинаковый ответ) → reset-password по токену → логин новым паролем
-- [ ] e2e: повторное использование токена отклоняется
-- [ ] run e2e: `pnpm --filter @repo/api test:e2e` — must pass before next task
+- [x] e2e: регистрация → перехват токена (json-транспорт/БД) → verify-email → профиль показывает `emailVerified: true`
+- [x] e2e: forgot-password (несуществующий и существующий email дают одинаковый ответ) → reset-password по токену → логин новым паролем
+- [x] e2e: повторное использование токена отклоняется
+- [x] run e2e: `pnpm --filter @repo/api test:e2e` — must pass before next task (3 suites / 9 tests passed; требует Postgres на :5441 через docker compose или CI)
 
 ### Task 10: Verify acceptance criteria
 
