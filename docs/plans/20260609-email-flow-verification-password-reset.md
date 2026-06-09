@@ -110,13 +110,13 @@
 - Modify: `apps/api/package.json` (dep: `nodemailer`, `@types/nodemailer`)
 - Modify: `.env.example`
 
-- [ ] добавить `nodemailer` + `@types/nodemailer` в `apps/api`
-- [ ] расширить `env.ts` (MAIL*TRANSPORT, MAIL_FROM, SMTP*_, WEB_URL, _\_TTL) с условной валидацией SMTP при `smtp`
-- [ ] реализовать `MailerService` (выбор транспорта по env; jsonTransport+pino в dev; методы `sendVerificationEmail`, `sendPasswordResetEmail`)
-- [ ] создать `MailerModule` (экспортирует `MailerService`)
-- [ ] обновить `.env.example` новыми переменными
-- [ ] написать тесты `MailerService` (json-режим логирует письмо; формирование ссылок; success + ошибка транспорта)
-- [ ] run tests — must pass before next task
+- [x] добавить `nodemailer` + `@types/nodemailer` в `apps/api`
+- [x] расширить `env.ts` (MAIL*TRANSPORT, MAIL_FROM, SMTP*_, WEB_URL, _\_TTL) с условной валидацией SMTP при `smtp`
+- [x] реализовать `MailerService` (выбор транспорта по env; jsonTransport+pino в dev; методы `sendVerificationEmail`, `sendPasswordResetEmail`)
+- [x] создать `MailerModule` (экспортирует `MailerService`)
+- [x] обновить `.env.example` новыми переменными
+- [x] написать тесты `MailerService` (json-режим логирует письмо; формирование ссылок; success + ошибка транспорта)
+- [x] run tests — must pass before next task
 
 ### Task 4: Verification-модуль (токены)
 
