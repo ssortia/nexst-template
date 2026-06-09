@@ -160,9 +160,9 @@
 - Create: `apps/api/src/auth/guards/verified.guard.ts`
 - Create: `apps/api/src/auth/guards/verified.guard.spec.ts`
 
-- [ ] реализовать `VerifiedGuard` (403 `EmailNotVerified`, если `user.emailVerified === false`)
-- [ ] написать тесты (verified → pass; not verified → 403)
-- [ ] run tests — must pass before next task
+- [x] реализовать `VerifiedGuard` (403 `EmailNotVerified`, если `user.emailVerified === false`)
+- [x] написать тесты (verified → pass; not verified → 403)
+- [x] run tests — must pass before next task
 
 ### Task 7: Auth — интеграция верификации в регистрацию + эндпоинты
 
