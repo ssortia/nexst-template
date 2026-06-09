@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import type { Role, User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
+import { msDurationToSeconds } from '../common/duration';
 import { getEnv } from '../config/env';
 import { UsersService } from '../users/users.service';
 
@@ -88,23 +89,4 @@ export class AuthService {
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await this.usersService.updateRefreshToken(userId, hashedRefreshToken);
   }
-}
-
-/**
- * Parse duration strings like '15m', '7d', '1h' into seconds.
- * Returns 900 (15 minutes) as a safe fallback.
- */
-function msDurationToSeconds(duration: string): number {
-  const multipliers: Record<string, number> = {
-    s: 1,
-    m: 60,
-    h: 3600,
-    d: 86400,
-    w: 604800,
-  };
-  const matched = duration.match(/^(\d+)([smhdw])$/);
-  if (!matched) return 900;
-  const value = parseInt(matched[1] ?? '15', 10);
-  const factor = multipliers[matched[2] ?? 's'] ?? 1;
-  return value * factor;
 }

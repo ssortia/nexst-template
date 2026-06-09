@@ -130,13 +130,13 @@
 - Create: `apps/api/src/common/duration.ts` (вынести `msDurationToSeconds`)
 - Modify: `apps/api/src/auth/auth.service.ts` (использовать общий duration-хелпер)
 
-- [ ] вынести `msDurationToSeconds` в `common/duration.ts`, переиспользовать в `auth.service`
-- [ ] `VerificationRepository` (create, findByTokenHash, deleteById, deleteByUserAndType) на базе `PrismaService`/`BaseRepository`
-- [ ] `VerificationService.issue(userId, type)` — генерация токена, хэш, инвалидация старых того же типа, возврат plain-токена
-- [ ] `VerificationService.consume(token, type)` — поиск по хэшу, проверка TTL, удаление, возврат userId (throw при invalid/expired)
-- [ ] `VerificationModule` (экспортирует `VerificationService`)
-- [ ] написать тесты сервиса (issue инвалидирует старые; consume success; expired; invalid; повторное использование) и репозитория
-- [ ] run tests — must pass before next task
+- [x] вынести `msDurationToSeconds` в `common/duration.ts`, переиспользовать в `auth.service`
+- [x] `VerificationRepository` (create, findByTokenHash, deleteById, deleteByUserAndType) на базе `PrismaService`/`BaseRepository`
+- [x] `VerificationService.issue(userId, type)` — генерация токена, хэш, инвалидация старых того же типа, возврат plain-токена
+- [x] `VerificationService.consume(token, type)` — поиск по хэшу, проверка TTL, удаление, возврат userId (throw при invalid/expired)
+- [x] `VerificationModule` (экспортирует `VerificationService`)
+- [x] написать тесты сервиса (issue инвалидирует старые; consume success; expired; invalid; повторное использование) и репозитория
+- [x] run tests — must pass before next task
 
 ### Task 5: Users — emailVerified в выдаче и сервисные методы
 
