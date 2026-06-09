@@ -8,7 +8,6 @@ process.env['MAIL_TRANSPORT'] = 'json';
 process.env['MAIL_FROM'] = 'no-reply@test.dev';
 process.env['WEB_URL'] = 'https://app.test';
 
-// eslint-disable-next-line import/first
 import { MailerService } from './mailer.service';
 
 describe('MailerService (json transport)', () => {

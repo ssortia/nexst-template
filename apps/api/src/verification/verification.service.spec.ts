@@ -7,10 +7,8 @@ process.env['JWT_REFRESH_SECRET'] = 'y'.repeat(32);
 process.env['EMAIL_VERIFICATION_TTL'] = '24h';
 process.env['PASSWORD_RESET_TTL'] = '1h';
 
-// eslint-disable-next-line import/first
-import { VerificationService } from './verification.service';
-// eslint-disable-next-line import/first
 import type { VerificationRepository } from './verification.repository';
+import { VerificationService } from './verification.service';
 
 const sha256 = (token: string) => createHash('sha256').update(token).digest('hex');
 

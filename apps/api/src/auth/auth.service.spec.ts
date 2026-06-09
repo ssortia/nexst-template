@@ -6,17 +6,13 @@ process.env['EMAIL_VERIFICATION_TTL'] = '24h';
 process.env['PASSWORD_RESET_TTL'] = '1h';
 
 import { ConflictException } from '@nestjs/common';
-// eslint-disable-next-line import/first
 import * as bcrypt from 'bcryptjs';
 
-// eslint-disable-next-line import/first
-import { AuthService } from './auth.service';
-// eslint-disable-next-line import/first
 import type { MailerService } from '../mailer/mailer.service';
-// eslint-disable-next-line import/first
 import type { UsersService } from '../users/users.service';
-// eslint-disable-next-line import/first
 import type { VerificationService } from '../verification/verification.service';
+
+import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   let usersService: {

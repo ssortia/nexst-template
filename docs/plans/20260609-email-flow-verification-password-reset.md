@@ -213,13 +213,13 @@
 
 ### Task 10: Verify acceptance criteria
 
-- [ ] регистрация инициирует письмо с верификацией
-- [ ] подтверждение и сброс пароля работают end-to-end через одноразовые токены
-- [ ] mailer не требует реального SMTP в dev
-- [ ] состояние верификации в модели User и в выдаче профиля
-- [ ] безопасность: одинаковый ответ forgot-password; хранится хэш токена; инвалидация после использования и по TTL
-- [ ] полный прогон: `pnpm --filter @repo/api test` и `pnpm --filter @repo/api test:e2e`
-- [ ] `pnpm --filter @repo/api typecheck` и `pnpm lint`
+- [x] регистрация инициирует письмо с верификацией
+- [x] подтверждение и сброс пароля работают end-to-end через одноразовые токены
+- [x] mailer не требует реального SMTP в dev
+- [x] состояние верификации в модели User и в выдаче профиля
+- [x] безопасность: одинаковый ответ forgot-password; хранится хэш токена; инвалидация после использования и по TTL
+- [x] полный прогон: `pnpm --filter @repo/api test` (15 suites / 68 tests passed) и `pnpm --filter @repo/api test:e2e` (3 suites / 9 tests passed)
+- [x] `pnpm --filter @repo/api typecheck` (passed); lint API+web чисто (после авто-fix import/order в 3 spec-файлах). ⚠️ `pnpm lint` целиком падает на `@repo/types#build` из-за root-owned `dist` (EACCES) — известная инфра-проблема, не связана с кодом
 
 ### Task 11: [Final] Документация
 
