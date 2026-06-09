@@ -12,6 +12,7 @@ const PUBLIC_SELECT = {
   id: true,
   email: true,
   role: true,
+  emailVerified: true,
   createdAt: true,
   updatedAt: true,
 } as const satisfies Prisma.UserSelect;
@@ -76,5 +77,18 @@ export class UsersRepository extends BaseRepository<
 
   async updateRefreshToken(id: string, hashedToken: string | null): Promise<void> {
     await this.prisma.user.update({ where: { id }, data: { refreshToken: hashedToken } });
+  }
+
+  async markEmailVerified(id: string): Promise<void> {
+    await this.prisma.user.update({ where: { id }, data: { emailVerified: true } });
+  }
+
+  // Сброс refreshToken вместе с паролем разлогинивает все активные сессии
+  // пользователя после смены пароля. Пароль приходит уже захэшированным.
+  async updatePassword(id: string, hashedPassword: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { id },
+      data: { password: hashedPassword, refreshToken: null },
+    });
   }
 }

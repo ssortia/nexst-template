@@ -147,11 +147,11 @@
 - Modify: `apps/api/src/users/dto/user-response.dto.ts`
 - Modify: `apps/api/src/users/users.controller.spec.ts`
 
-- [ ] добавить `emailVerified: true` в `PUBLIC_SELECT`
-- [ ] добавить методы `markEmailVerified(userId)` и `updatePassword(userId, hash)` (+ сброс refreshToken) в repository/service; `updatePassword` принимает **уже захэшированный** пароль (контракт как у `create(email, hashedPassword)` — хэширование остаётся в auth-слое)
-- [ ] добавить `emailVerified` в `UserResponseDto` (Swagger)
-- [ ] обновить тесты users (выдача содержит emailVerified; новые методы)
-- [ ] run tests — must pass before next task
+- [x] добавить `emailVerified: true` в `PUBLIC_SELECT`
+- [x] добавить методы `markEmailVerified(userId)` и `updatePassword(userId, hash)` (+ сброс refreshToken) в repository/service; `updatePassword` принимает **уже захэшированный** пароль (контракт как у `create(email, hashedPassword)` — хэширование остаётся в auth-слое)
+- [x] добавить `emailVerified` в `UserResponseDto` (Swagger)
+- [x] обновить тесты users (выдача содержит emailVerified; новые методы)
+- [x] run tests — must pass before next task
 
 ### Task 6: VerifiedGuard
 

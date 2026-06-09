@@ -37,4 +37,13 @@ export class UsersService {
   updateRefreshToken(userId: string, hashedToken: string | null): Promise<void> {
     return this.usersRepository.updateRefreshToken(userId, hashedToken);
   }
+
+  markEmailVerified(userId: string): Promise<void> {
+    return this.usersRepository.markEmailVerified(userId);
+  }
+
+  // Пароль приходит уже захэшированным (хэширование остаётся в auth-слое).
+  updatePassword(userId: string, hashedPassword: string): Promise<void> {
+    return this.usersRepository.updatePassword(userId, hashedPassword);
+  }
 }

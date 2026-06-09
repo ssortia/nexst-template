@@ -12,6 +12,9 @@ export class UserResponseDto {
   role: Role;
 
   @ApiProperty()
+  emailVerified: boolean;
+
+  @ApiProperty()
   createdAt: Date;
 
   @ApiProperty()
