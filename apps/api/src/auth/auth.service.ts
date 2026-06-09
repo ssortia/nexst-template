@@ -10,13 +10,17 @@ import * as bcrypt from 'bcryptjs';
 
 import { msDurationToSeconds } from '../common/duration';
 import { getEnv } from '../config/env';
+import { MailerService } from '../mailer/mailer.service';
 import { UsersService } from '../users/users.service';
+import { VerificationService } from '../verification/verification.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private verificationService: VerificationService,
+    private mailerService: MailerService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
@@ -38,7 +42,31 @@ export class AuthService {
     if (existing) throw new ConflictException('Email already in use');
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await this.usersService.create(email, hashedPassword);
+    // Инициируем верификацию почты, но логин разрешаем сразу — доступ к
+    // verified-only маршрутам ограничивает VerifiedGuard, а не сам логин.
+    await this.sendVerificationEmail(user.id, user.email);
     return this.login(user);
+  }
+
+  async verifyEmail(token: string): Promise<void> {
+    const userId = await this.verificationService.consume(token, 'EMAIL_VERIFICATION');
+    await this.usersService.markEmailVerified(userId);
+  }
+
+  /**
+   * Повторно отправляет письмо верификации. Не раскрывает, существует ли email
+   * и подтверждён ли он: при любом исходе ответ одинаков (тихий no-op).
+   */
+  async resendVerification(email: string): Promise<void> {
+    const user = await this.usersService.findByEmail(email);
+    if (user && !user.emailVerified) {
+      await this.sendVerificationEmail(user.id, user.email);
+    }
+  }
+
+  private async sendVerificationEmail(userId: string, email: string): Promise<void> {
+    const token = await this.verificationService.issue(userId, 'EMAIL_VERIFICATION');
+    await this.mailerService.sendVerificationEmail(email, token);
   }
 
   async login(user: User) {

@@ -176,13 +176,13 @@
 - Create: `apps/api/src/auth/auth.service.spec.ts`
 - Modify: `apps/api/src/auth/auth.controller.spec.ts`
 
-- [ ] подключить `MailerModule`, `VerificationModule` в `AuthModule`
-- [ ] `register`: после создания юзера выпустить EMAIL_VERIFICATION-токен и отправить письмо (логин сохраняется)
-- [ ] `verifyEmail(token)`: consume → `markEmailVerified`
-- [ ] `resendVerification(email)`: повторный выпуск+письмо (тихо, без раскрытия существования)
-- [ ] эндпоинты `POST /auth/verify-email`, `POST /auth/resend-verification` + DTO + Swagger + `@Audit(EMAIL_VERIFIED)` на verify-email
-- [ ] обновить unit-тесты auth (register шлёт письмо; verify-email success/invalid)
-- [ ] run tests — must pass before next task
+- [x] подключить `MailerModule`, `VerificationModule` в `AuthModule`
+- [x] `register`: после создания юзера выпустить EMAIL_VERIFICATION-токен и отправить письмо (логин сохраняется)
+- [x] `verifyEmail(token)`: consume → `markEmailVerified`
+- [x] `resendVerification(email)`: повторный выпуск+письмо (тихо, без раскрытия существования)
+- [x] эндпоинты `POST /auth/verify-email`, `POST /auth/resend-verification` + DTO + Swagger + `@Audit(EMAIL_VERIFIED)` на verify-email
+- [x] обновить unit-тесты auth (register шлёт письмо; verify-email success/invalid)
+- [x] run tests — must pass before next task
 
 ### Task 8: Auth — сброс пароля
 

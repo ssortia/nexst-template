@@ -9,6 +9,8 @@ import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { ResendVerificationDto } from './dto/resend-verification.dto';
+import { VerifyEmailDto } from './dto/verify-email.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 
@@ -37,6 +39,21 @@ export class AuthController {
   async login(@Body() loginDto: LoginDto) {
     const user = await this.authService.validateUser(loginDto.email, loginDto.password);
     return this.authService.login(user);
+  }
+
+  @Post('verify-email')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Audit({ event: AuditEvent.EMAIL_VERIFIED })
+  @ApiOperation({ summary: 'Verify email by one-time token' })
+  async verifyEmail(@Body() dto: VerifyEmailDto) {
+    await this.authService.verifyEmail(dto.token);
+  }
+
+  @Post('resend-verification')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Resend email verification link' })
+  async resendVerification(@Body() dto: ResendVerificationDto) {
+    await this.authService.resendVerification(dto.email);
   }
 
   @Post('refresh')

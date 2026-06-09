@@ -32,4 +32,17 @@ describe('AuthController @Audit metadata', () => {
     const options = reflector.get<AuditOptions>(AUDIT_KEY, AuthController.prototype.logout);
     expect(options.event).toBe(AuditEvent.LOGOUT);
   });
+
+  it('verify-email помечен EMAIL_VERIFIED', () => {
+    const options = reflector.get<AuditOptions>(AUDIT_KEY, AuthController.prototype.verifyEmail);
+    expect(options.event).toBe(AuditEvent.EMAIL_VERIFIED);
+  });
+
+  it('resend-verification без @Audit (тихий, не раскрывает существование)', () => {
+    const options = reflector.get<AuditOptions>(
+      AUDIT_KEY,
+      AuthController.prototype.resendVerification,
+    );
+    expect(options).toBeUndefined();
+  });
 });
