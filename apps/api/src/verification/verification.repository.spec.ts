@@ -54,4 +54,13 @@ describe('VerificationRepository', () => {
       where: { userId: 'u1', type: 'PASSWORD_RESET' },
     });
   });
+
+  it('deleteByTokenHashAndType атомарно гасит токен и возвращает count', async () => {
+    prisma.verificationToken.deleteMany.mockResolvedValue({ count: 1 });
+    const count = await repository.deleteByTokenHashAndType('hash', 'EMAIL_VERIFICATION');
+    expect(prisma.verificationToken.deleteMany).toHaveBeenCalledWith({
+      where: { tokenHash: 'hash', type: 'EMAIL_VERIFICATION' },
+    });
+    expect(count).toBe(1);
+  });
 });

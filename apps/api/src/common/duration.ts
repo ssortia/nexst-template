@@ -16,7 +16,6 @@ export function msDurationToSeconds(duration: string): number {
   };
   const matched = duration.match(/^(\d+)([smhdw])$/);
   if (!matched) return 900;
-  const value = parseInt(matched[1] ?? '15', 10);
-  const factor = multipliers[matched[2] ?? 's'] ?? 1;
-  return value * factor;
+  // Группы гарантированно присутствуют после совпадения regex; unit ∈ ключам multipliers.
+  return parseInt(matched[1]!, 10) * multipliers[matched[2]!]!;
 }

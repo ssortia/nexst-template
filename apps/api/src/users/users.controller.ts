@@ -8,6 +8,7 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { VerifiedGuard } from '../auth/guards/verified.guard';
 
 import { ListUsersQueryDto } from './dto/list-users-query.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -20,7 +21,9 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get('me')
-  @UseGuards(JwtAuthGuard)
+  // VerifiedGuard демонстрируется здесь: профиль доступен только после
+  // подтверждения email (поверх JwtAuthGuard — порядок гардов важен).
+  @UseGuards(JwtAuthGuard, VerifiedGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiOkResponse({ type: UserResponseDto })

@@ -7,13 +7,15 @@ import { getEnv } from '../config/env';
 export class MailerService implements OnModuleInit {
   private readonly logger = new Logger(MailerService.name);
   private transporter!: Transporter;
-  private readonly from = getEnv().MAIL_FROM;
-  private readonly webUrl = getEnv().WEB_URL;
+  // Env читаем один раз и обращаемся к нему единообразно во всём классе.
+  private readonly env = getEnv();
+  private readonly from = this.env.MAIL_FROM;
+  private readonly webUrl = this.env.WEB_URL;
 
   // Транспорт инициализируем при старте модуля: в dev — jsonTransport (письма не
   // уходят наружу, а сериализуются и логируются), в prod — реальный SMTP из env.
   onModuleInit(): void {
-    const env = getEnv();
+    const env = this.env;
     if (env.MAIL_TRANSPORT === 'smtp') {
       this.transporter = createTransport({
         host: env.SMTP_HOST,
@@ -55,7 +57,7 @@ export class MailerService implements OnModuleInit {
   }): Promise<void> {
     const info = await this.transporter.sendMail({ from: this.from, ...options });
     // В json-режиме письмо не доставляется — логируем его, чтобы извлекать ссылку в dev/тестах.
-    if (getEnv().MAIL_TRANSPORT === 'json') {
+    if (this.env.MAIL_TRANSPORT === 'json') {
       this.logger.log({ msg: 'Email sent (jsonTransport)', message: info.message });
     }
   }

@@ -17,7 +17,7 @@ const envSchema = z
 
     // Mailer
     MAIL_TRANSPORT: z.enum(['json', 'smtp']).default('json'),
-    MAIL_FROM: z.string().default('no-reply@example.com'),
+    MAIL_FROM: z.string().email().default('no-reply@example.com'),
     SMTP_HOST: z.string().optional(),
     SMTP_PORT: z.coerce.number().optional(),
     SMTP_USER: z.string().optional(),

@@ -24,4 +24,9 @@ describe('VerifiedGuard', () => {
       'EmailNotVerified',
     );
   });
+
+  it('fail-closed: бросает ForbiddenException, если user отсутствует', () => {
+    expect(() => guard.canActivate(contextWith(undefined))).toThrow(ForbiddenException);
+    expect(() => guard.canActivate(contextWith(undefined))).toThrow('EmailNotVerified');
+  });
 });

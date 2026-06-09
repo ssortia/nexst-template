@@ -37,6 +37,15 @@ export class VerificationRepository extends BaseRepository<
     await this.prisma.verificationToken.delete({ where: { id } });
   }
 
+  // Атомарное «погашение» токена: удаляем по хэшу+типу и возвращаем число удалённых.
+  // count === 1 означает, что именно этот вызов забрал одноразовый токен (защита от гонки).
+  async deleteByTokenHashAndType(tokenHash: string, type: VerificationTokenType): Promise<number> {
+    const { count } = await this.prisma.verificationToken.deleteMany({
+      where: { tokenHash, type },
+    });
+    return count;
+  }
+
   // Инвалидация всех ранее выпущенных токенов того же типа для пользователя.
   async deleteByUserAndType(userId: string, type: VerificationTokenType): Promise<void> {
     await this.prisma.verificationToken.deleteMany({ where: { userId, type } });

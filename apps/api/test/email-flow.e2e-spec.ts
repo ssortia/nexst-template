@@ -71,11 +71,11 @@ describe('Email flow (e2e)', () => {
       expect(accessToken).toBeTruthy();
       expect(verificationTokens).toHaveLength(1);
 
-      const me = await request(app.getHttpServer())
+      // /users/me защищён VerifiedGuard: неподтверждённый пользователь получает 403.
+      await request(app.getHttpServer())
         .get('/users/me')
         .set('Authorization', `Bearer ${accessToken}`)
-        .expect(200);
-      expect(me.body.emailVerified).toBe(false);
+        .expect(403);
     });
 
     it('verify-email по токену переводит профиль в emailVerified: true', async () => {
@@ -147,11 +147,50 @@ describe('Email flow (e2e)', () => {
         .expect(401);
     });
 
-    it('повторное использование reset-токена отклоняется', async () => {
+    it('повторное использование reset-токена отклоняется и НЕ меняет пароль', async () => {
+      const rejectedPassword = 'whatever12345';
       await request(app.getHttpServer())
         .post('/auth/reset-password')
-        .send({ token: resetTokens[0], password: 'whatever12345' })
+        .send({ token: resetTokens[0], password: rejectedPassword })
         .expect(400);
+
+      // Отклонённая попытка не должна была изменить пароль: действует предыдущий newPassword.
+      await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ email: resetEmail, password: newPassword })
+        .expect(200);
+      // Отклонённое новое значение пароля не применилось.
+      await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ email: resetEmail, password: rejectedPassword })
+        .expect(401);
+    });
+  });
+
+  describe('валидация DTO новых эндпоинтов', () => {
+    it('forgot-password отклоняет невалидный email', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/forgot-password')
+        .send({ email: 'not-an-email' })
+        .expect(400);
+    });
+
+    it('reset-password отклоняет запрос без токена', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/reset-password')
+        .send({ password: 'password123' })
+        .expect(400);
+    });
+
+    it('reset-password отклоняет пароль короче 8 символов', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/reset-password')
+        .send({ token: 'sometoken', password: 'short' })
+        .expect(400);
+    });
+
+    it('verify-email отклоняет запрос без токена', async () => {
+      await request(app.getHttpServer()).post('/auth/verify-email').send({}).expect(400);
     });
   });
 });

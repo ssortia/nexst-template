@@ -18,6 +18,7 @@ describe('VerificationService', () => {
     findByTokenHash: jest.Mock;
     deleteById: jest.Mock;
     deleteByUserAndType: jest.Mock;
+    deleteByTokenHashAndType: jest.Mock;
   };
   let service: VerificationService;
 
@@ -27,6 +28,7 @@ describe('VerificationService', () => {
       findByTokenHash: jest.fn(),
       deleteById: jest.fn().mockResolvedValue(undefined),
       deleteByUserAndType: jest.fn().mockResolvedValue(undefined),
+      deleteByTokenHashAndType: jest.fn().mockResolvedValue(1),
     };
     service = new VerificationService(repository as unknown as VerificationRepository);
   });
@@ -35,6 +37,19 @@ describe('VerificationService', () => {
     it('инвалидирует старые токены того же типа перед выпуском нового', async () => {
       await service.issue('u1', 'EMAIL_VERIFICATION');
       expect(repository.deleteByUserAndType).toHaveBeenCalledWith('u1', 'EMAIL_VERIFICATION');
+    });
+
+    it('инвалидирует старые токены до создания нового (порядок вызовов)', async () => {
+      const order: string[] = [];
+      repository.deleteByUserAndType.mockImplementation(async () => {
+        order.push('delete');
+      });
+      repository.create.mockImplementation(async () => {
+        order.push('create');
+        return { id: 't1' };
+      });
+      await service.issue('u1', 'EMAIL_VERIFICATION');
+      expect(order).toEqual(['delete', 'create']);
     });
 
     it('сохраняет sha256-хэш токена (не plain) и возвращает plain-токен', async () => {
@@ -68,13 +83,28 @@ describe('VerificationService', () => {
       const userId = await service.consume('plain', 'EMAIL_VERIFICATION');
       expect(userId).toBe('u1');
       expect(repository.findByTokenHash).toHaveBeenCalledWith(sha256('plain'));
-      expect(repository.deleteById).toHaveBeenCalledWith('t1');
+      // Погашение атомарным удалением по хэшу+типу.
+      expect(repository.deleteByTokenHashAndType).toHaveBeenCalledWith(
+        sha256('plain'),
+        'EMAIL_VERIFICATION',
+      );
     });
 
     it('отклоняет несуществующий (invalid) токен', async () => {
       repository.findByTokenHash.mockResolvedValue(null);
       await expect(service.consume('plain', 'EMAIL_VERIFICATION')).rejects.toThrow('Invalid token');
-      expect(repository.deleteById).not.toHaveBeenCalled();
+      expect(repository.deleteByTokenHashAndType).not.toHaveBeenCalled();
+    });
+
+    it('отклоняет гонку: токен забрал параллельный запрос (count !== 1)', async () => {
+      repository.findByTokenHash.mockResolvedValue({
+        id: 't1',
+        userId: 'u1',
+        type: 'EMAIL_VERIFICATION',
+        expiresAt: new Date(Date.now() + 60_000),
+      });
+      repository.deleteByTokenHashAndType.mockResolvedValue(0);
+      await expect(service.consume('plain', 'EMAIL_VERIFICATION')).rejects.toThrow('Invalid token');
     });
 
     it('отклоняет токен другого типа', async () => {
@@ -95,7 +125,11 @@ describe('VerificationService', () => {
         expiresAt: new Date(Date.now() - 1000),
       });
       await expect(service.consume('plain', 'EMAIL_VERIFICATION')).rejects.toThrow('Token expired');
-      expect(repository.deleteById).toHaveBeenCalledWith('t1');
+      // Просроченный токен всё равно гасится (атомарное удаление по хэшу+типу).
+      expect(repository.deleteByTokenHashAndType).toHaveBeenCalledWith(
+        sha256('plain'),
+        'EMAIL_VERIFICATION',
+      );
     });
 
     it('отклоняет повторное использование (токен уже удалён → не найден)', async () => {

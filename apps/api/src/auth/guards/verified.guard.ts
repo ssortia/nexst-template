@@ -13,9 +13,11 @@ import type { User } from '@prisma/client';
 @Injectable()
 export class VerifiedGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest<{ user: User }>();
+    const request = context.switchToHttp().getRequest<{ user?: User }>();
 
-    if (request.user?.emailVerified === false) {
+    // Fail-closed: гард рассчитан на работу поверх JwtAuthGuard (user всегда есть),
+    // но при отсутствии user считаем email неподтверждённым, а не пропускаем.
+    if (request.user?.emailVerified !== true) {
       throw new ForbiddenException('EmailNotVerified');
     }
 

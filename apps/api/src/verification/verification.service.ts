@@ -43,18 +43,24 @@ export class VerificationService {
    * удаляет (одноразовость) и возвращает userId. Бросает при невалидном/просроченном.
    */
   async consume(token: string, type: VerificationTokenType): Promise<string> {
-    const record = await this.repository.findByTokenHash(hashToken(token));
+    const tokenHash = hashToken(token);
+    const record = await this.repository.findByTokenHash(tokenHash);
     if (!record || record.type !== type) {
       throw new BadRequestException('Invalid token');
     }
 
-    // Просроченный токен удаляем сразу, чтобы не копить мусор в БД.
+    // Атомарно «забираем» токен удалением: count === 1 гарантирует, что параллельный
+    // запрос не сможет погасить тот же одноразовый токен второй раз (защита от гонки).
+    const claimed = await this.repository.deleteByTokenHashAndType(tokenHash, type);
+    if (claimed !== 1) {
+      throw new BadRequestException('Invalid token');
+    }
+
+    // Срок проверяем по уже забранной записи: токен в любом случае погашен.
     if (record.expiresAt.getTime() <= Date.now()) {
-      await this.repository.deleteById(record.id);
       throw new BadRequestException('Token expired');
     }
 
-    await this.repository.deleteById(record.id);
     return record.userId;
   }
 
