@@ -28,6 +28,7 @@ export const UserSchema = z.object({
   id: z.string(),
   email: z.string().email(),
   role: RoleSchema,
+  emailVerified: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
@@ -42,3 +43,32 @@ export const RefreshTokenDtoSchema = z.object({
 });
 
 export type RefreshTokenDto = z.infer<typeof RefreshTokenDtoSchema>;
+
+// Подтверждение email по одноразовому токену из письма.
+export const VerifyEmailDtoSchema = z.object({
+  token: z.string(),
+});
+
+export type VerifyEmailDto = z.infer<typeof VerifyEmailDtoSchema>;
+
+// Повторная отправка письма верификации (по email, без раскрытия существования).
+export const ResendVerificationDtoSchema = z.object({
+  email: z.string().email(),
+});
+
+export type ResendVerificationDto = z.infer<typeof ResendVerificationDtoSchema>;
+
+// Запрос сброса пароля (по email, ответ одинаков независимо от существования).
+export const ForgotPasswordDtoSchema = z.object({
+  email: z.string().email(),
+});
+
+export type ForgotPasswordDto = z.infer<typeof ForgotPasswordDtoSchema>;
+
+// Установка нового пароля по одноразовому токену из письма.
+export const ResetPasswordDtoSchema = z.object({
+  token: z.string(),
+  password: z.string().min(8),
+});
+
+export type ResetPasswordDto = z.infer<typeof ResetPasswordDtoSchema>;

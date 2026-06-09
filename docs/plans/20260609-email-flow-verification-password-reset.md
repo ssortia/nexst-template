@@ -92,12 +92,12 @@
 
 - Modify: `packages/types/src/auth.ts`
 
-- [ ] добавить `emailVerified: z.boolean()` в `UserSchema`
-- [ ] добавить `VerifyEmailDtoSchema`, `ResendVerificationDtoSchema`, `ForgotPasswordDtoSchema`, `ResetPasswordDtoSchema` (+ выведенные типы)
-- [ ] добавить новые значения в `AuditEventSchema` (`EMAIL_VERIFIED`, `PASSWORD_RESET_REQUESTED`, `PASSWORD_RESET_COMPLETED`) в `packages/types/src/audit.ts`
-- [ ] убедиться в ре-экспорте из `packages/types/src/index.ts`
-- [ ] в `@repo/types` нет test-раннера — гейтом служит `pnpm --filter @repo/types typecheck`
-- [ ] run typecheck — must pass before next task
+- [x] добавить `emailVerified: z.boolean()` в `UserSchema`
+- [x] добавить `VerifyEmailDtoSchema`, `ResendVerificationDtoSchema`, `ForgotPasswordDtoSchema`, `ResetPasswordDtoSchema` (+ выведенные типы)
+- [x] добавить новые значения в `AuditEventSchema` (`EMAIL_VERIFIED`, `PASSWORD_RESET_REQUESTED`, `PASSWORD_RESET_COMPLETED`) в `packages/types/src/audit.ts`
+- [x] убедиться в ре-экспорте из `packages/types/src/index.ts`
+- [x] в `@repo/types` нет test-раннера — гейтом служит `pnpm --filter @repo/types typecheck`
+- [x] run typecheck — must pass before next task
 
 ### Task 3: Mailer-модуль
 

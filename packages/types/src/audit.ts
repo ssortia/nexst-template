@@ -7,6 +7,9 @@ export const AuditEventSchema = z.enum([
   'LOGIN_FAILED',
   'LOGOUT',
   'USER_ROLE_CHANGED',
+  'EMAIL_VERIFIED',
+  'PASSWORD_RESET_REQUESTED',
+  'PASSWORD_RESET_COMPLETED',
 ]);
 export type AuditEvent = z.infer<typeof AuditEventSchema>;
 
