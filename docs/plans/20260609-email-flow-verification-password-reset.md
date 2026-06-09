@@ -194,11 +194,11 @@
 - Create: `apps/api/src/auth/dto/reset-password.dto.ts`
 - Modify: `apps/api/src/auth/auth.controller.spec.ts`
 
-- [ ] `forgotPassword(email)`: если юзер есть — выпустить PASSWORD_RESET-токен и письмо; ответ одинаковый всегда (204/200)
-- [ ] `resetPassword(token, password)`: consume → хэш нового пароля → `updatePassword` (+ сброс refreshToken)
-- [ ] эндпоинты `POST /auth/forgot-password`, `POST /auth/reset-password` + DTO + Swagger + `@Audit(PASSWORD_RESET_REQUESTED / PASSWORD_RESET_COMPLETED)` (forgot — без раскрытия существования email)
-- [ ] обновить unit-тесты (forgot не раскрывает существование; reset success/invalid/expired; старые сессии разлогинены)
-- [ ] run tests — must pass before next task
+- [x] `forgotPassword(email)`: если юзер есть — выпустить PASSWORD_RESET-токен и письмо; ответ одинаковый всегда (204/200)
+- [x] `resetPassword(token, password)`: consume → хэш нового пароля → `updatePassword` (+ сброс refreshToken)
+- [x] эндпоинты `POST /auth/forgot-password`, `POST /auth/reset-password` + DTO + Swagger + `@Audit(PASSWORD_RESET_REQUESTED / PASSWORD_RESET_COMPLETED)` (forgot — без раскрытия существования email)
+- [x] обновить unit-тесты (forgot не раскрывает существование; reset success/invalid/expired; старые сессии разлогинены)
+- [x] run tests — must pass before next task
 
 ### Task 9: e2e сквозной флоу
 

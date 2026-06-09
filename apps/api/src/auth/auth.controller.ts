@@ -7,9 +7,11 @@ import { Audit } from '../audit/decorators/audit.decorator';
 
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResendVerificationDto } from './dto/resend-verification.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
@@ -54,6 +56,27 @@ export class AuthController {
   @ApiOperation({ summary: 'Resend email verification link' })
   async resendVerification(@Body() dto: ResendVerificationDto) {
     await this.authService.resendVerification(dto.email);
+  }
+
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  // Логируем только email; событие не должно раскрывать, существует ли email —
+  // запрос фиксируется одинаково для любого адреса.
+  @Audit({
+    event: AuditEvent.PASSWORD_RESET_REQUESTED,
+    metadata: (req) => pick(req.body, ['email']),
+  })
+  @ApiOperation({ summary: 'Request a password reset link' })
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    await this.authService.forgotPassword(dto.email);
+  }
+
+  @Post('reset-password')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Audit({ event: AuditEvent.PASSWORD_RESET_COMPLETED })
+  @ApiOperation({ summary: 'Set a new password by one-time token' })
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    await this.authService.resetPassword(dto.token, dto.password);
   }
 
   @Post('refresh')

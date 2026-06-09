@@ -69,6 +69,28 @@ export class AuthService {
     await this.mailerService.sendVerificationEmail(email, token);
   }
 
+  /**
+   * Запрашивает сброс пароля. Не раскрывает, существует ли email: при любом
+   * исходе ответ одинаков (тихий no-op для несуществующего пользователя).
+   */
+  async forgotPassword(email: string): Promise<void> {
+    const user = await this.usersService.findByEmail(email);
+    if (user) {
+      const token = await this.verificationService.issue(user.id, 'PASSWORD_RESET');
+      await this.mailerService.sendPasswordResetEmail(user.email, token);
+    }
+  }
+
+  /**
+   * Устанавливает новый пароль по одноразовому токену. Сброс refreshToken
+   * разлогинивает все активные сессии пользователя.
+   */
+  async resetPassword(token: string, password: string): Promise<void> {
+    const userId = await this.verificationService.consume(token, 'PASSWORD_RESET');
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await this.usersService.updatePassword(userId, hashedPassword);
+  }
+
   async login(user: User) {
     const tokens = await this.generateTokens(user.id, user.email, user.role);
     await this.updateRefreshToken(user.id, tokens.refreshToken);

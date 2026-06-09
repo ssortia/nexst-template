@@ -6,6 +6,8 @@ process.env['EMAIL_VERIFICATION_TTL'] = '24h';
 process.env['PASSWORD_RESET_TTL'] = '1h';
 
 import { ConflictException } from '@nestjs/common';
+// eslint-disable-next-line import/first
+import * as bcrypt from 'bcryptjs';
 
 // eslint-disable-next-line import/first
 import { AuthService } from './auth.service';
@@ -22,10 +24,11 @@ describe('AuthService', () => {
     create: jest.Mock;
     updateRefreshToken: jest.Mock;
     markEmailVerified: jest.Mock;
+    updatePassword: jest.Mock;
   };
   let jwtService: { signAsync: jest.Mock };
   let verificationService: { issue: jest.Mock; consume: jest.Mock };
-  let mailerService: { sendVerificationEmail: jest.Mock };
+  let mailerService: { sendVerificationEmail: jest.Mock; sendPasswordResetEmail: jest.Mock };
   let service: AuthService;
 
   beforeEach(() => {
@@ -34,13 +37,17 @@ describe('AuthService', () => {
       create: jest.fn(),
       updateRefreshToken: jest.fn().mockResolvedValue(undefined),
       markEmailVerified: jest.fn().mockResolvedValue(undefined),
+      updatePassword: jest.fn().mockResolvedValue(undefined),
     };
     jwtService = { signAsync: jest.fn().mockResolvedValue('token') };
     verificationService = {
       issue: jest.fn().mockResolvedValue('plain-token'),
       consume: jest.fn(),
     };
-    mailerService = { sendVerificationEmail: jest.fn().mockResolvedValue(undefined) };
+    mailerService = {
+      sendVerificationEmail: jest.fn().mockResolvedValue(undefined),
+      sendPasswordResetEmail: jest.fn().mockResolvedValue(undefined),
+    };
 
     service = new AuthService(
       usersService as unknown as UsersService,
@@ -122,6 +129,59 @@ describe('AuthService', () => {
       await service.resendVerification('a@b.com');
 
       expect(mailerService.sendVerificationEmail).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('forgotPassword', () => {
+    it('выпускает PASSWORD_RESET-токен и шлёт письмо для существующего email', async () => {
+      usersService.findByEmail.mockResolvedValue({ id: 'u1', email: 'a@b.com' });
+
+      await service.forgotPassword('a@b.com');
+
+      expect(verificationService.issue).toHaveBeenCalledWith('u1', 'PASSWORD_RESET');
+      expect(mailerService.sendPasswordResetEmail).toHaveBeenCalledWith('a@b.com', 'plain-token');
+    });
+
+    it('даёт одинаковый ответ (тихий no-op) для несуществующего email', async () => {
+      usersService.findByEmail.mockResolvedValue(null);
+
+      await expect(service.forgotPassword('missing@b.com')).resolves.toBeUndefined();
+      expect(verificationService.issue).not.toHaveBeenCalled();
+      expect(mailerService.sendPasswordResetEmail).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('resetPassword', () => {
+    it('гасит токен, хэширует пароль и сбрасывает сессии', async () => {
+      verificationService.consume.mockResolvedValue('u1');
+
+      await service.resetPassword('plain-token', 'new-password123');
+
+      expect(verificationService.consume).toHaveBeenCalledWith('plain-token', 'PASSWORD_RESET');
+      expect(usersService.updatePassword).toHaveBeenCalledTimes(1);
+      const [userId, hash] = usersService.updatePassword.mock.calls[0];
+      expect(userId).toBe('u1');
+      // Пароль приходит уже захэшированным (не в открытом виде).
+      expect(hash).not.toBe('new-password123');
+      expect(await bcrypt.compare('new-password123', hash)).toBe(true);
+    });
+
+    it('пробрасывает ошибку при невалидном токене и не меняет пароль', async () => {
+      verificationService.consume.mockRejectedValue(new Error('Invalid token'));
+
+      await expect(service.resetPassword('bad', 'new-password123')).rejects.toThrow(
+        'Invalid token',
+      );
+      expect(usersService.updatePassword).not.toHaveBeenCalled();
+    });
+
+    it('пробрасывает ошибку при истёкшем токене и не меняет пароль', async () => {
+      verificationService.consume.mockRejectedValue(new Error('Token expired'));
+
+      await expect(service.resetPassword('expired', 'new-password123')).rejects.toThrow(
+        'Token expired',
+      );
+      expect(usersService.updatePassword).not.toHaveBeenCalled();
     });
   });
 });

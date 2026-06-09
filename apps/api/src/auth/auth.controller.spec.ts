@@ -45,4 +45,21 @@ describe('AuthController @Audit metadata', () => {
     );
     expect(options).toBeUndefined();
   });
+
+  it('forgot-password помечен PASSWORD_RESET_REQUESTED и логирует только email', () => {
+    const options = reflector.get<AuditOptions>(AUDIT_KEY, AuthController.prototype.forgotPassword);
+    expect(options.event).toBe(AuditEvent.PASSWORD_RESET_REQUESTED);
+
+    // metadata содержит только whitelisted email — не раскрывает существование.
+    const metadata = options.metadata?.({ body: { email: 'a@b.com' }, headers: {} });
+    expect(metadata).toEqual({ email: 'a@b.com' });
+  });
+
+  it('reset-password помечен PASSWORD_RESET_COMPLETED и не логирует пароль', () => {
+    const options = reflector.get<AuditOptions>(AUDIT_KEY, AuthController.prototype.resetPassword);
+    expect(options.event).toBe(AuditEvent.PASSWORD_RESET_COMPLETED);
+
+    // По умолчанию metadata не задана — токен и пароль не попадают в лог.
+    expect(options.metadata).toBeUndefined();
+  });
 });
