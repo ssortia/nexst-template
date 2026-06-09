@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { RoleProvider } from '@/components/auth/role-provider';
+import { MainNav } from '@/components/main-nav';
 import { ThemeToggle } from '@/components/theme-toggle';
 
 import { auth, signOut } from '../../auth';
@@ -26,12 +27,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <Link href="/" className="text-xl font-semibold">
                 NexST
               </Link>
-              <Link
-                href="/admin/users"
-                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-              >
-                Пользователи
-              </Link>
+              <MainNav role={session.user.role} />
             </div>
             <div className="flex items-center gap-4">
               <ThemeToggle />

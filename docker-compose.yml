@@ -7,11 +7,11 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: nexst_dev
     ports:
-      - "5432:5432"
+      - '5441:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -25,7 +25,7 @@ services:
       - /app/node_modules
       - /app/apps/api/node_modules
     ports:
-      - "3001:3001"
+      - '3001:3001'
     environment:
       PORT: 3001
       DATABASE_URL: postgresql://postgres:postgres@db:5432/nexst_dev
@@ -46,7 +46,7 @@ services:
       - /app/node_modules
       - /app/apps/web/node_modules
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-change-me-nextauth-secret-min-32-chars}
       NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}

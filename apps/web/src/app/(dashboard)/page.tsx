@@ -12,8 +12,9 @@ import {
   Zap,
 } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { env } from '@/lib/env';
 
 import { auth } from '../../auth';
 
@@ -103,10 +104,15 @@ export default async function DashboardPage() {
             Это стартовый шаблон NexST. Подключи данные и начни строить продукт.
           </p>
         </div>
-        <Button variant="outline" className="hidden gap-2 sm:flex">
+        <a
+          href={`${env.NEXT_PUBLIC_API_URL}/api/docs`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={buttonVariants({ variant: 'outline' })}
+        >
           <BookOpen className="h-4 w-4" />
-          Документация
-        </Button>
+          Swagger API
+        </a>
       </div>
 
       {/* Stats */}

@@ -9,6 +9,7 @@
 - **Монорепо** — pnpm workspaces + Turborepo с кэшированием сборок
 - **API** — NestJS 11 с Fastify-адаптером, SWC-компилятором и Swagger UI
 - **JWT-аутентификация** — login / refresh / logout с хранением хэша refresh-токена в БД
+- **Аудит-лог** — автоматическая фиксация действий через декоратор `@Audit` + глобальный interceptor, просмотр журнала на web с фильтрами (только ADMIN)
 - **Web** — Next.js 15 App Router с защищёнными маршрутами через next-auth v5
 - **UI** — shadcn/ui компоненты в `apps/web/src/components/ui` на Tailwind CSS v4
 - **Тёмная тема** — next-themes с переключателем в хедере, сохранение в localStorage, поддержка системных настроек

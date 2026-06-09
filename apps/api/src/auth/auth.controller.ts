@@ -1,6 +1,9 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import type { User } from '@prisma/client';
+import { AuditEvent, type User } from '@prisma/client';
+import { pick } from '@repo/utils';
+
+import { Audit } from '../audit/decorators/audit.decorator';
 
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -23,6 +26,13 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  // Логируем только email; пароль в metadata не попадает.
+  @Audit({
+    event: AuditEvent.LOGIN_SUCCESS,
+    failureEvent: AuditEvent.LOGIN_FAILED,
+    actor: (req) => ({ email: req.body?.['email'] as string | undefined }),
+    metadata: (req) => pick(req.body, ['email']),
+  })
   @ApiOperation({ summary: 'Login with email and password' })
   async login(@Body() loginDto: LoginDto) {
     const user = await this.authService.validateUser(loginDto.email, loginDto.password);
@@ -41,6 +51,7 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @Audit({ event: AuditEvent.LOGOUT })
   @ApiOperation({ summary: 'Logout current user' })
   async logout(@CurrentUser() user: User) {
     await this.authService.logout(user.id);

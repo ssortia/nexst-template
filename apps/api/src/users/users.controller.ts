@@ -1,8 +1,9 @@
 import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import type { User } from '@prisma/client';
-import { Role } from '@prisma/client';
+import { AuditEvent, Role, type User } from '@prisma/client';
+import { pick } from '@repo/utils';
 
+import { Audit } from '../audit/decorators/audit.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -41,6 +42,12 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @ApiBearerAuth()
+  @Audit({
+    event: AuditEvent.USER_ROLE_CHANGED,
+    targetType: 'User',
+    target: (req) => req.params?.['id'],
+    metadata: (req) => pick(req.body, ['role']),
+  })
   @ApiOperation({ summary: 'Update user role (admin only)' })
   async updateRole(
     @Param('id') id: string,

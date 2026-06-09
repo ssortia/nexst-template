@@ -25,3 +25,32 @@ model User {
   @@index([createdAt])
   @@map("users")
 }
+
+// Значения зеркалят Zod-схему AuditEventSchema в @repo/types (source of truth).
+// Prisma-enum не может импортировать из пакета, поэтому список сверяется вручную.
+enum AuditEvent {
+  LOGIN_SUCCESS
+  LOGIN_FAILED
+  LOGOUT
+  USER_ROLE_CHANGED
+}
+
+model AuditLog {
+  id         String     @id @default(cuid())
+  event      AuditEvent
+  success    Boolean    @default(true)
+  // actorId/targetId без FK на User: журнал переживает удаление пользователя
+  actorId    String?
+  actorEmail String? // денормализованный email актора для отображения без join
+  targetId   String?
+  targetType String? // тип целевой сущности ("User")
+  metadata   Json? // только whitelisted поля (без паролей/токенов)
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime   @default(now())
+
+  @@index([createdAt])
+  @@index([event])
+  @@index([actorId])
+  @@map("audit_logs")
+}

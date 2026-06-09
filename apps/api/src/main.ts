@@ -7,9 +7,13 @@ import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
-    bufferLogs: true,
-  });
+  // trustProxy: за обратным прокси (nginx) Fastify должен доверять X-Forwarded-For,
+  // иначе request.ip == IP прокси — критично для аудита, где IP актора важен.
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter({ trustProxy: true }),
+    { bufferLogs: true },
+  );
 
   app.useLogger(app.get(Logger));
 
@@ -21,8 +25,18 @@ async function bootstrap() {
     }),
   );
 
+  // Список разрешённых origin'ов (через запятую). localhost и 127.0.0.1 —
+  // разные origin'ы для CORS, поэтому в dev по умолчанию разрешаем оба.
+  const corsOrigins = (
+    process.env['CORS_ORIGIN'] ??
+    process.env['NEXTAUTH_URL'] ??
+    'http://localhost:3000,http://127.0.0.1:3000'
+  )
+    .split(',')
+    .map((origin) => origin.trim());
+
   app.enableCors({
-    origin: process.env['NEXTAUTH_URL'] ?? 'http://localhost:3000',
+    origin: corsOrigins,
     credentials: true,
   });
 

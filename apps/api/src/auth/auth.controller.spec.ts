@@ -1,0 +1,35 @@
+import { Reflector } from '@nestjs/core';
+import { AuditEvent } from '@prisma/client';
+
+import { AUDIT_KEY, type AuditOptions } from '../audit/decorators/audit.decorator';
+
+import { AuthController } from './auth.controller';
+
+describe('AuthController @Audit metadata', () => {
+  const reflector = new Reflector();
+
+  it('login помечен LOGIN_SUCCESS / LOGIN_FAILED', () => {
+    const options = reflector.get<AuditOptions>(AUDIT_KEY, AuthController.prototype.login);
+    expect(options.event).toBe(AuditEvent.LOGIN_SUCCESS);
+    expect(options.failureEvent).toBe(AuditEvent.LOGIN_FAILED);
+  });
+
+  it('резолвер metadata логина возвращает только email, без password', () => {
+    const options = reflector.get<AuditOptions>(AUDIT_KEY, AuthController.prototype.login);
+    const req = {
+      body: { email: 'a@b.com', password: 'secret-pw' },
+      headers: {},
+    };
+    const metadata = options.metadata?.(req);
+    expect(metadata).toEqual({ email: 'a@b.com' });
+    expect(JSON.stringify(metadata)).not.toContain('secret-pw');
+
+    // Актор резолвится из body (на login нет req.user).
+    expect(options.actor?.(req)).toEqual({ email: 'a@b.com' });
+  });
+
+  it('logout помечен LOGOUT', () => {
+    const options = reflector.get<AuditOptions>(AUDIT_KEY, AuthController.prototype.logout);
+    expect(options.event).toBe(AuditEvent.LOGOUT);
+  });
+});

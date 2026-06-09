@@ -84,7 +84,8 @@ docker compose down
 - Health check at `/health`
 - Structured logging via `nestjs-pino`
 - Env validation via `zod` at startup
-- Module structure: `auth`, `users`, `prisma` (core modules pre-configured)
+- Module structure: `auth`, `users`, `prisma`, `audit` (core modules pre-configured)
+- Audit logging: declarative `@Audit(...)` decorator on controller handlers + a global `AuditInterceptor` (see ADR-010 and `docs/guides/adding-audit-event.md`)
 
 ### Web (`apps/web`)
 
