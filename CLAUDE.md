@@ -16,6 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 10. Когда пользователь просит «сохранить план в файл» — сохранять в файл внутри проекта (например, в `docs/guides/`), а не во внутреннюю память Claude.
 11. Когда предлагаешь несколько вариантов на выбор, для обозначения вариантов используй нумерацию, а не буквы латинского алфавита.
 12. Не добавляй в commit message свое соавторство
+13. Добавляй номер issue в начало имени ветки при ее создании
 
 ## Project Overview
 
@@ -84,8 +85,9 @@ docker compose down
 - Health check at `/health`
 - Structured logging via `nestjs-pino`
 - Env validation via `zod` at startup
-- Module structure: `auth`, `users`, `prisma`, `audit` (core modules pre-configured)
+- Module structure: `auth`, `users`, `prisma`, `audit`, `mailer`, `verification` (core modules pre-configured)
 - Audit logging: declarative `@Audit(...)` decorator on controller handlers + a global `AuditInterceptor` (see ADR-010 and `docs/guides/adding-audit-event.md`)
+- Email flow: email verification + password reset on one-time tokens (`mailer` module over nodemailer with transport-by-env, `verification` token table, `VerifiedGuard`) — see ADR-011 and `docs/guides/email-verification-and-password-reset.md`
 
 ### Web (`apps/web`)
 

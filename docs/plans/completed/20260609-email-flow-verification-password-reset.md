@@ -231,10 +231,10 @@
 - Modify: `README.md` (список фич)
 - Modify: `CLAUDE.md` (если появились новые паттерны/модули)
 
-- [ ] ADR с решениями: nodemailer+транспорт по env, отдельная таблица токенов, политика VerifiedGuard
-- [ ] гайд по флоу и env-переменным
-- [ ] обновить список фич в README.md и модули в CLAUDE.md
-- [ ] переместить этот план в `docs/plans/completed/`
+- [x] ADR с решениями: nodemailer+транспорт по env, отдельная таблица токенов, политика VerifiedGuard
+- [x] гайд по флоу и env-переменным
+- [x] обновить список фич в README.md и модули в CLAUDE.md
+- [x] переместить этот план в `docs/plans/completed/`
 
 ## Post-Completion
 

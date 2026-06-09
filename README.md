@@ -9,6 +9,7 @@
 - **Монорепо** — pnpm workspaces + Turborepo с кэшированием сборок
 - **API** — NestJS 11 с Fastify-адаптером, SWC-компилятором и Swagger UI
 - **JWT-аутентификация** — login / refresh / logout с хранением хэша refresh-токена в БД
+- **Верификация email и сброс пароля** — одноразовые токены (хэш + TTL), `VerifiedGuard`; mailer на nodemailer с транспортом по env (json в dev без SMTP, smtp в prod)
 - **Аудит-лог** — автоматическая фиксация действий через декоратор `@Audit` + глобальный interceptor, просмотр журнала на web с фильтрами (только ADMIN)
 - **Web** — Next.js 15 App Router с защищёнными маршрутами через next-auth v5
 - **UI** — shadcn/ui компоненты в `apps/web/src/components/ui` на Tailwind CSS v4
@@ -124,15 +125,16 @@ docker compose down                         # остановить
 
 ## Документация
 
-| Документ                                                           | Описание                               |
-| ------------------------------------------------------------------ | -------------------------------------- |
-| [docs/DOCUMENTATION.md](./docs/DOCUMENTATION.md)                   | Правила ведения документации в проекте |
-| [docs/guides/getting-started.md](./docs/guides/getting-started.md) | Локальная установка шаг за шагом       |
-| [docs/guides/development.md](./docs/guides/development.md)         | Ежедневный workflow разработчика       |
-| [docs/guides/adding-a-module.md](./docs/guides/adding-a-module.md) | Добавление новой бизнес-сущности       |
-| [docs/guides/deployment.md](./docs/guides/deployment.md)           | Деплой в продакшен                     |
-| [docs/adr/](./docs/adr/)                                           | Архитектурные решения (ADR)            |
-| [CLAUDE.md](./CLAUDE.md)                                           | Инструкции для AI-ассистента           |
+| Документ                                                                                                       | Описание                               |
+| -------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| [docs/DOCUMENTATION.md](./docs/DOCUMENTATION.md)                                                               | Правила ведения документации в проекте |
+| [docs/guides/getting-started.md](./docs/guides/getting-started.md)                                             | Локальная установка шаг за шагом       |
+| [docs/guides/development.md](./docs/guides/development.md)                                                     | Ежедневный workflow разработчика       |
+| [docs/guides/adding-a-module.md](./docs/guides/adding-a-module.md)                                             | Добавление новой бизнес-сущности       |
+| [docs/guides/email-verification-and-password-reset.md](./docs/guides/email-verification-and-password-reset.md) | Верификация email и сброс пароля       |
+| [docs/guides/deployment.md](./docs/guides/deployment.md)                                                       | Деплой в продакшен                     |
+| [docs/adr/](./docs/adr/)                                                                                       | Архитектурные решения (ADR)            |
+| [CLAUDE.md](./CLAUDE.md)                                                                                       | Инструкции для AI-ассистента           |
 
 ---
 
