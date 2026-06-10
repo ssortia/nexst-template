@@ -34,7 +34,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               >
                 <button
                   type="submit"
-                  className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+                  className="text-muted-foreground hover:text-foreground cursor-pointer text-sm transition-colors"
                 >
                   Выйти
                 </button>

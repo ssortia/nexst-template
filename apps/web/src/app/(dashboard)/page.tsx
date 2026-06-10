@@ -5,7 +5,6 @@ import {
   CircleCheck,
   Database,
   GitBranch,
-  LayoutDashboard,
   Package,
   ShieldCheck,
   Users,
@@ -95,10 +94,6 @@ export default async function DashboardPage() {
       {/* Hero */}
       <div className="flex items-start justify-between">
         <div className="space-y-1">
-          <div className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
-            <LayoutDashboard className="h-4 w-4" />
-            Dashboard
-          </div>
           <h2 className="text-3xl font-bold tracking-tight">Добро пожаловать, {name} 👋</h2>
           <p className="text-muted-foreground">
             Это стартовый шаблон NexST. Подключи данные и начни строить продукт.

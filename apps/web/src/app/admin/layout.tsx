@@ -40,7 +40,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               >
                 <button
                   type="submit"
-                  className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+                  className="text-muted-foreground hover:text-foreground cursor-pointer text-sm transition-colors"
                 >
                   Выйти
                 </button>
