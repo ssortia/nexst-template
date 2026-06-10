@@ -12,11 +12,19 @@ import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { TestTokenStore } from './test-token.store';
 
 @Module({
   imports: [UsersModule, MailerModule, VerificationModule, PassportModule, JwtModule.register({})],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, JwtRefreshStrategy, JwtRefreshGuard, RolesGuard],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    JwtRefreshStrategy,
+    JwtRefreshGuard,
+    RolesGuard,
+    TestTokenStore,
+  ],
   exports: [RolesGuard],
 })
 export class AuthModule {}

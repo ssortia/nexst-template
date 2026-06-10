@@ -14,6 +14,8 @@ import { MailerService } from '../mailer/mailer.service';
 import { UsersService } from '../users/users.service';
 import { VerificationService } from '../verification/verification.service';
 
+import { TestTokenStore } from './test-token.store';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -21,6 +23,7 @@ export class AuthService {
     private jwtService: JwtService,
     private verificationService: VerificationService,
     private mailerService: MailerService,
+    private testTokenStore: TestTokenStore,
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
@@ -66,6 +69,7 @@ export class AuthService {
 
   private async sendVerificationEmail(userId: string, email: string): Promise<void> {
     const token = await this.verificationService.issue(userId, 'EMAIL_VERIFICATION');
+    this.testTokenStore.record(email, 'EMAIL_VERIFICATION', token);
     await this.mailerService.sendVerificationEmail(email, token);
   }
 
@@ -77,6 +81,7 @@ export class AuthService {
     const user = await this.usersService.findByEmail(email);
     if (user) {
       const token = await this.verificationService.issue(user.id, 'PASSWORD_RESET');
+      this.testTokenStore.record(user.email, 'PASSWORD_RESET', token);
       await this.mailerService.sendPasswordResetEmail(user.email, token);
     }
   }

@@ -1,9 +1,21 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuditEvent, type User } from '@prisma/client';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  NotFoundException,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuditEvent, type User, type VerificationTokenType } from '@prisma/client';
 import { pick } from '@repo/utils';
 
 import { Audit } from '../audit/decorators/audit.decorator';
+import { getEnv } from '../config/env';
 
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -15,11 +27,15 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { TestTokenStore } from './test-token.store';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private testTokenStore: TestTokenStore,
+  ) {}
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
@@ -95,5 +111,20 @@ export class AuthController {
   @ApiOperation({ summary: 'Logout current user' })
   async logout(@CurrentUser() user: User) {
     await this.authService.logout(user.id);
+  }
+
+  // Только для e2e: отдаёт последний выпущенный plain-токен (в БД лежит лишь хэш).
+  // Вне NODE_ENV=test эндпоинт ведёт себя как несуществующий и скрыт из Swagger.
+  @Get('__test/last-token')
+  @ApiExcludeEndpoint()
+  lastToken(@Query('email') email: string, @Query('type') type: VerificationTokenType) {
+    if (getEnv().NODE_ENV !== 'test') {
+      throw new NotFoundException();
+    }
+    const token = this.testTokenStore.getLast(email, type);
+    if (!token) {
+      throw new NotFoundException('Token not found');
+    }
+    return { token };
   }
 }

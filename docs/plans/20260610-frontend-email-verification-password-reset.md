@@ -243,15 +243,17 @@
 - Modify: `apps/web/package.json` (devDeps `@playwright/test`, скрипт `test:e2e`)
 - Modify: `turbo.json` (опционально: задача `test:e2e`)
 
-- [ ] `test-token.store.ts`: простое in-memory хранилище (Map по email+type → последний plain-токен)
-- [ ] в `mailer.service.ts` при `MAIL_TRANSPORT === 'json'` записывать выпущенный токен в store
-- [ ] эндпоинт `GET /auth/__test/last-token?email=&type=`: при `NODE_ENV !== 'test'` → 404/отключён
-- [ ] установить `@playwright/test`, добавить скрипт `test:e2e`
-- [ ] `playwright.config.ts`: baseURL на web (3000); поднятие стенда web+api+postgres согласовать с
+- [x] `test-token.store.ts`: простое in-memory хранилище (Map по email+type → последний plain-токен)
+- [x] записывать выпущенный токен в store в `auth.service.ts` (в `sendVerificationEmail`/`forgotPassword`),
+      гейт по `NODE_ENV=test` — внутри самого store, независимо от транспорта писем
+      (отступление от плана: чище держать тестовую логику в auth-домене, а не в mailer)
+- [x] эндпоинт `GET /auth/__test/last-token?email=&type=`: при `NODE_ENV !== 'test'` → 404/отключён
+- [x] установить `@playwright/test`, добавить скрипт `test:e2e`
+- [x] `playwright.config.ts`: baseURL на web (3000); поднятие стенда web+api+postgres согласовать с
       окружением проекта (сборка через Docker, postgres на порту 5441 — host-сборка падает с EACCES)
-- [ ] хелпер `verification-token.ts`: HTTP-запрос к `GET /auth/__test/last-token`, возвращает plain-токен для URL
-- [ ] подтвердить, что инфраструктура запускается (пустой smoke-тест проходит)
-- [ ] зафиксировать в README/гайде команду запуска e2e и требование `NODE_ENV=test`
+- [x] хелпер `verification-token.ts`: HTTP-запрос к `GET /auth/__test/last-token`, возвращает plain-токен для URL
+- [x] подтвердить, что инфраструктура запускается (пустой smoke-тест проходит)
+- [x] зафиксировать в README/гайде команду запуска e2e и требование `NODE_ENV=test`
 
 ### Task 9: Playwright e2e-тесты email-флоу
 
@@ -260,13 +262,13 @@
 - Create: `apps/web/e2e/email-verification.spec.ts`
 - Create: `apps/web/e2e/password-reset.spec.ts`
 
-- [ ] верификация: регистрация → токен из `/auth/__test/last-token` → открыть `/verify-email?token=...` →
+- [x] верификация: регистрация → токен из `/auth/__test/last-token` → открыть `/verify-email?token=...` →
       success; verified-статус подтверждается (баннер очищается после refresh/повторного входа)
-- [ ] resend: `/verify-email` без/с невалидным токеном → ошибка (400) → форма повтора отправляет письмо
-- [ ] сброс: `/forgot-password` отправка email → токен из эндпоинта → `/reset-password?token=...` →
+- [x] resend: `/verify-email` без/с невалидным токеном → ошибка (400) → форма повтора отправляет письмо
+- [x] сброс: `/forgot-password` отправка email → токен из эндпоинта → `/reset-password?token=...` →
       новый пароль → вход новым паролем работает
-- [ ] негатив: повторно использованный/невалидный reset-токен → 400 → корректное сообщение об ошибке в UI
-- [ ] прогнать `pnpm --filter @repo/web test:e2e` — все тесты зелёные перед следующей задачей
+- [x] негатив: повторно использованный/невалидный reset-токен → 400 → корректное сообщение об ошибке в UI
+- [x] прогнать `pnpm --filter @repo/web test:e2e` — все тесты зелёные перед следующей задачей
 
 ### Task 10: Verify acceptance criteria
 

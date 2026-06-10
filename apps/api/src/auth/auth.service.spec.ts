@@ -13,6 +13,7 @@ import type { UsersService } from '../users/users.service';
 import type { VerificationService } from '../verification/verification.service';
 
 import { AuthService } from './auth.service';
+import type { TestTokenStore } from './test-token.store';
 
 describe('AuthService', () => {
   let usersService: {
@@ -25,6 +26,7 @@ describe('AuthService', () => {
   let jwtService: { signAsync: jest.Mock };
   let verificationService: { issue: jest.Mock; consume: jest.Mock };
   let mailerService: { sendVerificationEmail: jest.Mock; sendPasswordResetEmail: jest.Mock };
+  let testTokenStore: { record: jest.Mock; getLast: jest.Mock };
   let service: AuthService;
 
   beforeEach(() => {
@@ -44,6 +46,7 @@ describe('AuthService', () => {
       sendVerificationEmail: jest.fn().mockResolvedValue(undefined),
       sendPasswordResetEmail: jest.fn().mockResolvedValue(undefined),
     };
+    testTokenStore = { record: jest.fn(), getLast: jest.fn() };
 
     service = new AuthService(
       usersService as unknown as UsersService,
@@ -51,6 +54,7 @@ describe('AuthService', () => {
       jwtService as any,
       verificationService as unknown as VerificationService,
       mailerService as unknown as MailerService,
+      testTokenStore as unknown as TestTokenStore,
     );
   });
 
