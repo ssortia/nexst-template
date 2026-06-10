@@ -272,19 +272,21 @@
 
 ### Task 10: Verify acceptance criteria
 
-- [ ] все 4 экрана (verify-email, forgot-password, reset-password, resend) реализованы и доступны публично
-- [ ] ссылки из писем (`/verify-email`, `/reset-password`) совпадают с `mailer.service.ts`
-- [ ] баннер корректно реагирует на `emailVerified`
-- [ ] обработаны краевые случаи: нет токена, невалидный/использованный токен, ошибка сети
-- [ ] полный прогон: `pnpm lint`, `pnpm typecheck`, `pnpm --filter @repo/api test`
-- [ ] e2e: `pnpm --filter @repo/web test:e2e`
+- [x] все 4 экрана (verify-email, forgot-password, reset-password, resend) реализованы и доступны публично
+- [x] ссылки из писем (`/verify-email`, `/reset-password`) совпадают с `mailer.service.ts`
+- [x] баннер корректно реагирует на `emailVerified`
+- [x] обработаны краевые случаи: нет токена, невалидный/использованный токен, ошибка сети
+- [x] полный прогон: per-package `@repo/api` (typecheck/lint/78 тестов) и `@repo/web` (typecheck/lint) —
+      зелёные. Корневой `pnpm lint`/`typecheck` падает на `@repo/types#build` из-за env (host-сборка
+      EACCES, `dist` принадлежит root — сборка через Docker); это не связано с изменениями.
+- [x] e2e: `pnpm --filter @repo/web test:e2e` — 4/4 зелёные (стенд с `NODE_ENV=test`)
 
 ### Task 11: [Final] Документация
 
-- [ ] обновить `docs/guides/email-verification-and-password-reset.md` фронтенд-частью (страницы, маршруты, баннер)
-- [ ] обновить список фич в `README.md` (фронтенд email-флоу)
-- [ ] при новом паттерне (Playwright e2e в web) — отразить в `CLAUDE.md`/README команду запуска
-- [ ] перенести этот план в `docs/plans/completed/`
+- [x] обновить `docs/guides/email-verification-and-password-reset.md` фронтенд-частью (страницы, маршруты, баннер)
+- [x] обновить список фич в `README.md` (фронтенд email-флоу)
+- [x] при новом паттерне (Playwright e2e в web) — отразить в `CLAUDE.md`/README команду запуска
+- [x] перенести этот план в `docs/plans/completed/`
 
 ## Post-Completion
 
