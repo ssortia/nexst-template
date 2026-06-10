@@ -1,3 +1,5 @@
+import type { ApiErrorBody } from '@repo/types';
+
 import { env } from './env';
 
 // На сервере — API_URL (внутренняя сеть/docker), на клиенте — NEXT_PUBLIC_API_URL
@@ -14,10 +16,41 @@ export class ApiError extends Error {
   constructor(
     public readonly status: number,
     message: string,
+    /** Отдельные сообщения валидации из тела ответа (если есть). */
+    public readonly details?: string[],
   ) {
     super(message);
     this.name = 'ApiError';
   }
+}
+
+/** Проверка, что распарсенное тело соответствует контракту ApiErrorBody. */
+function isApiErrorBody(value: unknown): value is ApiErrorBody {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as Record<string, unknown>)['message'] === 'string'
+  );
+}
+
+/**
+ * Приводит неуспешный ответ к ApiError: сначала пытается распарсить тело по
+ * контракту ApiErrorBody (чистый message + опциональные details), при неуспехе —
+ * фолбэк на сырой текст ответа.
+ */
+async function parseApiError(res: Response): Promise<ApiError> {
+  const raw = await res.text();
+
+  try {
+    const body: unknown = JSON.parse(raw);
+    if (isApiErrorBody(body)) {
+      return new ApiError(res.status, body.message, body.details);
+    }
+  } catch {
+    // Тело не JSON или не по контракту — используем фолбэк ниже.
+  }
+
+  return new ApiError(res.status, raw || `HTTP ${res.status}`);
 }
 
 async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
@@ -44,8 +77,7 @@ async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<
   });
 
   if (!res.ok) {
-    const error = await res.text();
-    throw new ApiError(res.status, error || `HTTP ${res.status}`);
+    throw await parseApiError(res);
   }
 
   if (res.status === 204) {
