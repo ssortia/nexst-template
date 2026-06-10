@@ -7,7 +7,6 @@ describe('VerificationRepository', () => {
     verificationToken: {
       create: jest.Mock;
       findUnique: jest.Mock;
-      delete: jest.Mock;
       deleteMany: jest.Mock;
     };
   };
@@ -18,7 +17,6 @@ describe('VerificationRepository', () => {
       verificationToken: {
         create: jest.fn().mockResolvedValue({ id: 't1' }),
         findUnique: jest.fn().mockResolvedValue({ id: 't1' }),
-        delete: jest.fn().mockResolvedValue({ id: 't1' }),
         deleteMany: jest.fn().mockResolvedValue({ count: 2 }),
       },
     };
@@ -41,11 +39,6 @@ describe('VerificationRepository', () => {
     expect(prisma.verificationToken.findUnique).toHaveBeenCalledWith({
       where: { tokenHash: 'hash' },
     });
-  });
-
-  it('deleteById удаляет по id', async () => {
-    await repository.deleteById('t1');
-    expect(prisma.verificationToken.delete).toHaveBeenCalledWith({ where: { id: 't1' } });
   });
 
   it('deleteByUserAndType удаляет все токены пользователя данного типа', async () => {

@@ -16,7 +16,6 @@ describe('VerificationService', () => {
   let repository: {
     create: jest.Mock;
     findByTokenHash: jest.Mock;
-    deleteById: jest.Mock;
     deleteByUserAndType: jest.Mock;
     deleteByTokenHashAndType: jest.Mock;
   };
@@ -26,7 +25,6 @@ describe('VerificationService', () => {
     repository = {
       create: jest.fn().mockResolvedValue({ id: 't1' }),
       findByTokenHash: jest.fn(),
-      deleteById: jest.fn().mockResolvedValue(undefined),
       deleteByUserAndType: jest.fn().mockResolvedValue(undefined),
       deleteByTokenHashAndType: jest.fn().mockResolvedValue(1),
     };
