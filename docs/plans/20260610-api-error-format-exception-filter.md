@@ -8,8 +8,8 @@
 
 Решение (минимальное, без RFC 7807 / Zod / расширения Swagger / per-field ошибок):
 
-- единый shape тела: `{ statusCode: number, message: string }`;
-- глобальный фильтр приводит к нему все источники: `HttpException` (массив `message` валидации склеивается в строку), Prisma (`P2002`→409, `P2025`→404), неизвестное → 500 без утечки деталей;
+- единый shape тела: `{ statusCode: number, message: string, details?: string[] }`;
+- глобальный фильтр приводит к нему все источники: `HttpException` (ошибка валидации → generic message + details[]), Prisma (`P2002`→409, `P2025`→404), неизвестное → 500 без утечки деталей;
 - фронтовый `ApiError` парсит этот shape и отдаёт чистый `.message` вместо сырого текста;
 - существующие потребители на фронте сверяются с новым контрактом.
 
@@ -40,7 +40,7 @@
 
 > Тесты живут только в `@repo/api` (Jest). `@repo/types` и `apps/web` своих unit-runner'ов не имеют; фронт проверяется Playwright (`test:e2e`).
 
-- **unit (Jest, `@repo/api`)**: маппинг `HttpException` (включая валидацию с массивом `message` → строка), Prisma (`P2002`/`P2025`, ошибки конструируются вручную без БД), неизвестной ошибки (500, нет утечки в prod)
+- **unit (Jest, `@repo/api`)**: маппинг `HttpException` (включая валидацию с массивом `message` → generic message + details[]), Prisma (`P2002`/`P2025`, ошибки конструируются вручную без БД), неизвестной ошибки (500, нет утечки в prod)
 - **e2e (Playwright, `apps/web`)**: флоу с ошибкой (неверный логин) показывает корректное сообщение
 - команды: `pnpm --filter @repo/api test`, `pnpm --filter @repo/web test:e2e`
 
@@ -56,14 +56,15 @@
   type ApiErrorBody = {
     statusCode: number;
     message: string; // всегда одна человекочитаемая строка
+    details?: string[]; // отдельные сообщения валидации (опционально)
   };
   ```
 - **Фильтр** `AllExceptionsFilter` (`@Catch()`, один файл в `common/filters/`):
-  - `HttpException` → `status`, нормализованный `message` (если тело валидации даёт массив строк — склеить в одну строку);
+  - `HttpException` → `status`, нормализованный `message`; ошибка валидации (`BadRequestException` с массивом строк в `message`) → generic message + details[] (плоский массив, без per-field, без factory);
   - `Prisma.PrismaClientKnownRequestError` → `P2002`→409, `P2025`→404, прочее→500 (safety net — явные исключения в коде остаются);
   - неизвестное → 500, generic `message`, без stack/SQL в теле; полная ошибка логируется через `Logger` (nestjs-pino);
   - Fastify: reply/request через `host.switchToHttp().getResponse<FastifyReply>()`; писать `reply.status(s).send(body)`; guard на `reply.sent`.
-- **Валидация**: фабрика и `exceptionFactory` не нужны — фильтр обрабатывает дефолтный `BadRequestException` от `ValidationPipe`, склеивая массив `message` в строку. Поле-уровневые ошибки не отдаём (фронт валидирует поля client-side через `react-hook-form + zod`).
+- **Валидация**: фабрика и `exceptionFactory` не нужны — фильтр обрабатывает дефолтный `BadRequestException` от `ValidationPipe`, отдавая generic message + details[] (плоский массив сообщений из пайпа, без per-field, без factory). Поле-уровневые ошибки не отдаём (фронт валидирует поля client-side через `react-hook-form + zod`).
 - **Фронт**: `ApiError` получает чистое поле `message`; `apiFetch` пытается распарсить JSON-тело по контракту, при неуспехе — фолбэк на `res.text()`. Существующие формы продолжают работать по `status`, но теперь могут показывать серверный `message`.
 
 ## Implementation Steps
@@ -87,14 +88,14 @@
 - Create: `apps/api/src/common/filters/all-exceptions.filter.spec.ts`
 - Modify: `apps/api/src/main.ts`
 
-- [ ] создать `AllExceptionsFilter` (`@Catch()`), формирующий `ApiErrorBody` и отправляющий через Fastify `reply` (типы `FastifyRequest/FastifyReply`, guard на `reply.sent`)
-- [ ] маппинг `HttpException`: нормализовать `message` в строку (массив валидации → склеить)
-- [ ] маппинг `Prisma.PrismaClientKnownRequestError`: `P2002`→409, `P2025`→404, прочее→500
-- [ ] неизвестная ошибка → 500, generic `message`, без stack/деталей; логировать полную через инжектированный `Logger`; скрывать детали при `NODE_ENV==='production'`
-- [ ] зарегистрировать фильтр в `main.ts` (`app.useGlobalFilters(...)`)
-- [ ] тесты: `HttpException` (403) → тело; валидация (массив `message`) → одна строка; `P2002`→409, `P2025`→404 (ошибки сконструированы вручную); неизвестная → 500 без утечки
-- [ ] проверить существующие спеки auth/users/verification — статус-коды не изменились
-- [ ] `pnpm --filter @repo/api test` — весь набор проходит
+- [x] создать `AllExceptionsFilter` (`@Catch()`), формирующий `ApiErrorBody` и отправляющий через Fastify `reply` (типы `FastifyRequest/FastifyReply`, guard на `reply.sent`)
+- [x] маппинг `HttpException`: нормализовать `message` в строку; валидация → message + details[]
+- [x] маппинг `Prisma.PrismaClientKnownRequestError`: `P2002`→409, `P2025`→404, прочее→500
+- [x] неизвестная ошибка → 500, generic `message`, без stack/деталей; логировать полную через инжектированный `Logger`; детали 500 никогда не попадают в тело (generic message в любом env), полная ошибка только в логе
+- [x] зарегистрировать фильтр в `main.ts` (`app.useGlobalFilters(...)`)
+- [x] тесты: `HttpException` (403) → тело; валидация (массив `message`) → message + details[]; `P2002`→409, `P2025`→404 (ошибки сконструированы вручную); неизвестная → 500 без утечки
+- [x] проверить существующие спеки auth/users/verification — статус-коды не изменились
+- [x] `pnpm --filter @repo/api test` — весь набор проходит (17 suites, 84 tests)
 
 ### Task 3: Подключить новый формат на фронте
 

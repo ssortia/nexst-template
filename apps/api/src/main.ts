@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
 async function bootstrap() {
   // trustProxy: за обратным прокси (nginx) Fastify должен доверять X-Forwarded-For,
@@ -16,6 +17,8 @@ async function bootstrap() {
   );
 
   app.useLogger(app.get(Logger));
+
+  app.useGlobalFilters(new AllExceptionsFilter(app.get(Logger)));
 
   app.useGlobalPipes(
     new ValidationPipe({

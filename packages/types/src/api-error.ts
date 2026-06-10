@@ -3,4 +3,6 @@
 export interface ApiErrorBody {
   statusCode: number;
   message: string;
+  // Отдельные сообщения валидации (если ошибка от ValidationPipe).
+  details?: string[];
 }
