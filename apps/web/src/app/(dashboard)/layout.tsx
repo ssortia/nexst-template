@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 
+import { EmailVerificationBanner } from '@/components/auth/email-verification-banner';
 import { RoleProvider } from '@/components/auth/role-provider';
 import { MainNav } from '@/components/main-nav';
 import { ThemeToggle } from '@/components/theme-toggle';
@@ -41,6 +42,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </div>
           </div>
         </header>
+        {!session.user.isEmailVerified && session.user.email && (
+          <EmailVerificationBanner email={session.user.email} />
+        )}
         <main className="container mx-auto px-4 py-8">{children}</main>
       </div>
     </RoleProvider>

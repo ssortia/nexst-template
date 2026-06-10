@@ -224,12 +224,12 @@
 - Create: `apps/web/src/components/auth/email-verification-banner.tsx`
 - Modify: `apps/web/src/app/(dashboard)/layout.tsx`
 
-- [ ] компонент-баннер: показывается, если `session.user.emailVerified === false`
-- [ ] текст + кнопка/ссылка «Отправить письмо повторно» (переиспользует resend из Task 5)
-- [ ] вставить баннер в `(dashboard)/layout.tsx` над `main`
-- [ ] учесть staleness: баннер исчезает после refresh access-токена/повторного входа (не мгновенно
+- [x] компонент-баннер: показывается, если `session.user.emailVerified === false`
+- [x] текст + кнопка/ссылка «Отправить письмо повторно» (переиспользует resend из Task 5)
+- [x] вставить баннер в `(dashboard)/layout.tsx` над `main`
+- [x] учесть staleness: баннер исчезает после refresh access-токена/повторного входа (не мгновенно
       после верификации) — это ожидаемое поведение, не баг
-- [ ] `typecheck` + `lint` зелёные
+- [x] `typecheck` + `lint` зелёные
 
 ### Task 8: Test-only эндпоинт токена + инфраструктура Playwright e2e
 
