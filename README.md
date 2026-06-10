@@ -11,6 +11,7 @@
 - **JWT-аутентификация** — login / refresh / logout с хранением хэша refresh-токена в БД
 - **Верификация email и сброс пароля** — одноразовые токены (хэш + TTL), `VerifiedGuard`; mailer на nodemailer с транспортом по env (json в dev без SMTP, smtp в prod); на web — страницы `/verify-email`, `/forgot-password`, `/reset-password` и баннер о неподтверждённом email
 - **Аудит-лог** — автоматическая фиксация действий через декоратор `@Audit` + глобальный interceptor, просмотр журнала на web с фильтрами (только ADMIN)
+- **Единый формат ошибок API** — глобальный `AllExceptionsFilter` приводит любой источник ошибки к одному shape `{ statusCode, message, details? }` (валидация, Prisma `P2002`→409/`P2025`→404, неизвестные → 500 без утечки деталей); на web `ApiError` парсит этот формат
 - **Web** — Next.js 15 App Router с защищёнными маршрутами через next-auth v5
 - **UI** — shadcn/ui компоненты в `apps/web/src/components/ui` на Tailwind CSS v4
 - **Тёмная тема** — next-themes с переключателем в хедере, сохранение в localStorage, поддержка системных настроек

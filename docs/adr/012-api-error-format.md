@@ -27,13 +27,13 @@
 
 2. **Глобальный `AllExceptionsFilter`** (`apps/api/src/common/filters/all-exceptions.filter.ts`, `@Catch()`), зарегистрирован в `main.ts` через `app.useGlobalFilters`. Пишет ответ через Fastify `reply` с guard на `reply.sent`. Маппинг:
    - `HttpException` → `getStatus()` + нормализованный строковый `message`;
-   - валидация (`BadRequestException` с массивом строк в `message`) → `message: 'Ошибка валидации'` + `details[]` (плоский массив, без per-field);
+   - валидация (`BadRequestException` с массивом строк в `message`) → `message: 'Validation failed'` + `details[]` (плоский массив, без per-field);
    - `Prisma.PrismaClientKnownRequestError`: `P2002` → 409, `P2025` → 404, прочее → 500 (safety net — явные исключения в коде остаются);
    - неизвестное → 500 с generic `message`.
 
 3. **Скрытие деталей в prod.** Для 5xx полная ошибка (включая stack и детали Prisma) пишется только в лог через `Logger` (nestjs-pino); в тело уходит generic `message` в любом окружении — stack/SQL не утекают.
 
-4. **Фронт.** `apiFetch` (`apps/web/src/lib/api.ts`) парсит тело по контракту `ApiErrorBody`, отдавая чистый `message` (и `details`) в `ApiError`; при неуспехе парсинга — фолбэк на `res.text()`. Существующие формы продолжают читать `err.status`, обратная совместимость сохранена.
+4. **Фронт.** `apiFetch` (`apps/web/src/lib/api.ts`) парсит тело по контракту `ApiErrorBody`, отдавая чистый `message` в `ApiError`; при неуспехе парсинга — фолбэк на `res.text()`. Поле `details` остаётся в серверном теле, но на фронте не потребляется. Существующие формы продолжают читать `err.status`, обратная совместимость сохранена.
 
 ---
 

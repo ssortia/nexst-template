@@ -89,6 +89,7 @@ docker compose down
 - Module structure: `auth`, `users`, `prisma`, `audit`, `mailer`, `verification` (core modules pre-configured)
 - Audit logging: declarative `@Audit(...)` decorator on controller handlers + a global `AuditInterceptor` (see ADR-010 and `docs/guides/adding-audit-event.md`)
 - Email flow: email verification + password reset on one-time tokens (`mailer` module over nodemailer with transport-by-env, `verification` token table, `VerifiedGuard`) — see ADR-011 and `docs/guides/email-verification-and-password-reset.md`
+- Error format: global `AllExceptionsFilter` (`common/filters/`) normalizes every error source to a single `ApiErrorBody` shape `{ statusCode, message, details? }` (HttpException, validation, Prisma `P2002`→409/`P2025`→404, unknown→500 without leaking internals) — see ADR-012
 
 ### Web (`apps/web`)
 

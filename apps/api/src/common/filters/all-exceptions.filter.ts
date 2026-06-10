@@ -71,7 +71,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // ValidationPipe (BadRequestException) кладёт message массивом строк:
     // отдаём generic message + сами сообщения в details[].
     if (exception instanceof BadRequestException && this.isStringArray(message)) {
-      return { statusCode, message: 'Ошибка валидации', details: message };
+      return { statusCode, message: 'Validation failed', details: message };
     }
 
     if (typeof message === 'string') {

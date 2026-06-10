@@ -16,8 +16,6 @@ export class ApiError extends Error {
   constructor(
     public readonly status: number,
     message: string,
-    /** Отдельные сообщения валидации из тела ответа (если есть). */
-    public readonly details?: string[],
   ) {
     super(message);
     this.name = 'ApiError';
@@ -26,17 +24,16 @@ export class ApiError extends Error {
 
 /** Проверка, что распарсенное тело соответствует контракту ApiErrorBody. */
 function isApiErrorBody(value: unknown): value is ApiErrorBody {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    typeof (value as Record<string, unknown>)['message'] === 'string'
-  );
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const record = value as Record<string, unknown>;
+  return typeof record['message'] === 'string' && typeof record['statusCode'] === 'number';
 }
 
 /**
  * Приводит неуспешный ответ к ApiError: сначала пытается распарсить тело по
- * контракту ApiErrorBody (чистый message + опциональные details), при неуспехе —
- * фолбэк на сырой текст ответа.
+ * контракту ApiErrorBody (чистый message), при неуспехе — фолбэк на сырой текст.
  */
 async function parseApiError(res: Response): Promise<ApiError> {
   const raw = await res.text();
@@ -44,7 +41,7 @@ async function parseApiError(res: Response): Promise<ApiError> {
   try {
     const body: unknown = JSON.parse(raw);
     if (isApiErrorBody(body)) {
-      return new ApiError(res.status, body.message, body.details);
+      return new ApiError(res.status, body.message);
     }
   } catch {
     // Тело не JSON или не по контракту — используем фолбэк ниже.
