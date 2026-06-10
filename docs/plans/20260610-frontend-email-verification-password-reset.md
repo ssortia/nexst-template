@@ -162,13 +162,13 @@
 - Create: `apps/web/src/app/(auth)/reset-password/page.tsx`
 - Create: `apps/web/src/components/auth/reset-password-form.tsx`
 
-- [ ] `page.tsx` читает `searchParams.token`; при отсутствии — рендерит сообщение об ошибке без формы
-- [ ] `reset-password-form.tsx`: принимает `token` пропсом, форм-схема `z.object({ password: z.string().min(8) })`,
+- [x] `page.tsx` читает `searchParams.token`; при отсутствии — рендерит сообщение об ошибке без формы
+- [x] `reset-password-form.tsx`: принимает `token` пропсом, форм-схема `z.object({ password: z.string().min(8) })`,
       одно поле password (тип password)
-- [ ] сабмит вызывает `authApi.resetPassword(token, password)`; при успехе — сообщение + ссылка на `/login`
-- [ ] обработка `ApiError`: `status === 400` — «ссылка недействительна или устарела», ссылка на `/forgot-password`
-- [ ] `metadata.title`, стиль Card как у остальных
-- [ ] `typecheck` + `lint` зелёные
+- [x] сабмит вызывает `authApi.resetPassword(token, password)`; при успехе — сообщение + ссылка на `/login`
+- [x] обработка `ApiError`: `status === 400` — «ссылка недействительна или устарела», ссылка на `/forgot-password`
+- [x] `metadata.title`, стиль Card как у остальных
+- [x] `typecheck` + `lint` зелёные
 
 ### Task 4: Страница /verify-email с авто-подтверждением
 
@@ -177,14 +177,14 @@
 - Create: `apps/web/src/app/(auth)/verify-email/page.tsx`
 - Create: `apps/web/src/components/auth/verify-email-status.tsx`
 
-- [ ] `page.tsx` читает `searchParams.token` и передаёт в клиентский компонент
-- [ ] `verify-email-status.tsx` (`'use client'`): при монтировании вызывает `authApi.verifyEmail(token)`
-- [ ] **защита от двойного вызова**: `useRef`-флаг, чтобы под React StrictMode (dev двойной mount)
+- [x] `page.tsx` читает `searchParams.token` и передаёт в клиентский компонент
+- [x] `verify-email-status.tsx` (`'use client'`): при монтировании вызывает `authApi.verifyEmail(token)`
+- [x] **защита от двойного вызова**: `useRef`-флаг, чтобы под React StrictMode (dev двойной mount)
       запрос не ушёл дважды и не перевёл уже успешный статус в ошибку (`consume` одноразовый → 2-й = 400)
-- [ ] состояния: `loading` / `success` (ссылка на `/login`) / `error` (с кнопкой «Отправить письмо повторно»)
-- [ ] ошибка только по `status === 400` и сетевым сбоям; при отсутствии токена — сразу error, без запроса
-- [ ] кнопка повтора ведёт на UI resend из Task 5 (или инлайн-форма по email)
-- [ ] `typecheck` + `lint` зелёные
+- [x] состояния: `loading` / `success` (ссылка на `/login`) / `error` (с кнопкой «Отправить письмо повторно»)
+- [x] ошибка только по `status === 400` и сетевым сбоям; при отсутствии токена — сразу error, без запроса
+- [x] кнопка повтора ведёт на UI resend из Task 5 (или инлайн-форма по email)
+- [x] `typecheck` + `lint` зелёные
 
 ### Task 5: Повторная отправка письма верификации (resend UI)
 
@@ -194,10 +194,10 @@
 - Modify: `apps/web/src/components/auth/verify-email-status.tsx` (использование формы при ошибке)
 - Modify: `apps/web/src/components/auth/login-form.tsx` (ссылка «Не пришло письмо?») — опционально
 
-- [ ] `resend-verification-form.tsx`: `ZodForm` по `ResendVerificationDtoSchema`, поле email
-- [ ] сабмит вызывает `authApi.resendVerification`; нейтральное сообщение об успехе
-- [ ] встроить форму/CTA в состояние ошибки `verify-email-status.tsx`
-- [ ] `typecheck` + `lint` зелёные
+- [x] `resend-verification-form.tsx`: `ZodForm` по `ResendVerificationDtoSchema`, поле email
+- [x] сабмит вызывает `authApi.resendVerification`; нейтральное сообщение об успехе
+- [x] встроить форму/CTA в состояние ошибки `verify-email-status.tsx`
+- [x] `typecheck` + `lint` зелёные
 
 ### Task 6: Признак emailVerified в JWT и сессии next-auth
 
