@@ -61,6 +61,11 @@ export function LoginForm() {
           </Button>
         </ZodForm>
         <p className="text-muted-foreground mt-4 text-center text-sm">
+          <Link href="/forgot-password" className="hover:text-foreground underline">
+            Забыли пароль?
+          </Link>
+        </p>
+        <p className="text-muted-foreground mt-2 text-center text-sm">
           Нет аккаунта?{' '}
           <Link href="/register" className="hover:text-foreground underline">
             Зарегистрироваться

@@ -132,12 +132,12 @@
 
 - Modify: `apps/web/src/api/auth.api.ts`
 
-- [ ] добавить `verifyEmail(token: string)` → `api.post<void>('/auth/verify-email', { token })`
-- [ ] добавить `resendVerification(email: string)` → `api.post<void>('/auth/resend-verification', { email })`
-- [ ] добавить `forgotPassword(email: string)` → `api.post<void>('/auth/forgot-password', { email })`
-- [ ] добавить `resetPassword(token: string, password: string)` → `api.post<void>('/auth/reset-password', { token, password })`
-- [ ] типы аргументов брать из `@repo/types` (`ResetPasswordDto` и т.п.), не дублировать формы
-- [ ] `pnpm --filter @repo/web typecheck` и `lint` — без ошибок (e2e появится в Task 8–9)
+- [x] добавить `verifyEmail(token: string)` → `api.post<void>('/auth/verify-email', { token })`
+- [x] добавить `resendVerification(email: string)` → `api.post<void>('/auth/resend-verification', { email })`
+- [x] добавить `forgotPassword(email: string)` → `api.post<void>('/auth/forgot-password', { email })`
+- [x] добавить `resetPassword(token: string, password: string)` → `api.post<void>('/auth/reset-password', { token, password })`
+- [x] типы аргументов брать из `@repo/types` (`ResetPasswordDto` и т.п.), не дублировать формы
+- [x] `pnpm --filter @repo/web typecheck` и `lint` — без ошибок (e2e появится в Task 8–9)
 
 ### Task 2: Страница и форма /forgot-password
 
@@ -147,13 +147,13 @@
 - Create: `apps/web/src/components/auth/forgot-password-form.tsx`
 - Modify: `apps/web/src/components/auth/login-form.tsx` (ссылка «Забыли пароль?»)
 
-- [ ] `forgot-password-form.tsx`: `ZodForm` по `ForgotPasswordDtoSchema`, одно поле email
-- [ ] сабмит вызывает `authApi.forgotPassword`; при успехе — нейтральное сообщение
+- [x] `forgot-password-form.tsx`: `ZodForm` по `ForgotPasswordDtoSchema`, одно поле email
+- [x] сабмит вызывает `authApi.forgotPassword`; при успехе — нейтральное сообщение
       «Если адрес зарегистрирован, мы отправили ссылку для сброса»
-- [ ] обработка ошибки сети/сервера через `ApiError` + `text-destructive`
-- [ ] `page.tsx` в стиле login/register (Card по центру), `metadata.title`
-- [ ] добавить ссылку «Забыли пароль?» в `login-form.tsx`
-- [ ] `typecheck` + `lint` зелёные
+- [x] обработка ошибки сети/сервера через `ApiError` + `text-destructive`
+- [x] `page.tsx` в стиле login/register (Card по центру), `metadata.title`
+- [x] добавить ссылку «Забыли пароль?» в `login-form.tsx`
+- [x] `typecheck` + `lint` зелёные
 
 ### Task 3: Страница и форма /reset-password
 
