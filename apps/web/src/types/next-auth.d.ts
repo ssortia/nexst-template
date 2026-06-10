@@ -9,6 +9,9 @@ declare module 'next-auth' {
     user: {
       id: string;
       role: Role;
+      // Не `emailVerified`: это имя зарезервировано next-auth под `Date | null`,
+      // слияние деклараций дало бы конфликт типов.
+      isEmailVerified: boolean;
     } & DefaultSession['user'];
   }
 }

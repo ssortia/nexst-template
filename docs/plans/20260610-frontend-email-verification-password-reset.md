@@ -208,13 +208,14 @@
 - Modify: `apps/web/src/types/next-auth.d.ts` (поле `emailVerified` в Session/User)
 - Modify: `apps/api/test/email-flow.e2e-spec.ts` и `apps/api/src/auth/*.spec.ts` (если декодируют payload)
 
-- [ ] добавить параметр `emailVerified` в `generateTokens` и включить в payload
-- [ ] прокинуть `user.emailVerified` в `generateTokens` из **обоих** мест: `login` и `refresh`
+- [x] добавить параметр `emailVerified` в `generateTokens` и включить в payload
+- [x] прокинуть `user.emailVerified` в `generateTokens` из **обоих** мест: `login` и `refresh`
       (refresh перечитывает юзера из БД → после верификации признак станет свежим на ближайшем refresh)
-- [ ] обновить `AccessTokenClaims` и `authorize` в `auth.ts`, прокинуть в jwt- и session-callbacks
-- [ ] расширить типы next-auth полем `emailVerified: boolean`
-- [ ] **обязательно** обновить backend-тесты, проверяющие содержимое токена/сессии
-- [ ] `pnpm --filter @repo/api test` и `--filter @repo/web typecheck` зелёные
+- [x] обновить `AccessTokenClaims` и `authorize` в `auth.ts`, прокинуть в jwt- и session-callbacks
+- [x] расширить типы next-auth полем `isEmailVerified: boolean` (имя `emailVerified` зарезервировано
+      next-auth под `Date | null` — слияние деклараций давало конфликт типов; читать `session.user.isEmailVerified`)
+- [x] **обязательно** обновить backend-тесты, проверяющие содержимое токена/сессии
+- [x] `pnpm --filter @repo/api test` и `--filter @repo/web typecheck` зелёные
 
 ### Task 7: Баннер «email не подтверждён» в дашборде
 

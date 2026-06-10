@@ -5,22 +5,32 @@ import { z } from 'zod';
 import type { Role } from '@repo/types';
 
 import { authApi } from './api/auth.api';
-import { usersApi } from './api/users.api';
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
 });
 
-function getJwtExpiry(accessToken: string): number {
+type AccessTokenClaims = {
+  sub?: string;
+  email?: string;
+  role?: Role;
+  emailVerified?: boolean;
+  exp?: number;
+};
+
+function decodeAccessToken(accessToken: string): AccessTokenClaims | null {
   try {
-    const payload = JSON.parse(
+    return JSON.parse(
       Buffer.from(accessToken.split('.')[1] ?? '', 'base64url').toString(),
-    ) as { exp?: number };
-    return (payload.exp ?? 0) * 1000;
+    ) as AccessTokenClaims;
   } catch {
-    return 0;
+    return null;
   }
+}
+
+function getJwtExpiry(accessToken: string): number {
+  return (decodeAccessToken(accessToken)?.exp ?? 0) * 1000;
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -38,12 +48,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         try {
           const tokens = await authApi.login(parsed.data);
-          const user = await usersApi.me(tokens.accessToken);
+          // Берём профиль из claims токена, а не из /users/me: тот маршрут
+          // закрыт VerifiedGuard и недоступен до подтверждения email.
+          const claims = decodeAccessToken(tokens.accessToken);
+          if (!claims?.sub || !claims.email || !claims.role) return null;
 
           return {
-            id: user.id,
-            email: user.email,
-            role: user.role,
+            id: claims.sub,
+            email: claims.email,
+            role: claims.role,
+            isEmailVerified: claims.emailVerified ?? false,
             accessToken: tokens.accessToken,
             refreshToken: tokens.refreshToken,
           };
@@ -56,10 +70,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        const u = user as { accessToken?: string; refreshToken?: string; role?: Role };
+        const u = user as {
+          accessToken?: string;
+          refreshToken?: string;
+          role?: Role;
+          isEmailVerified?: boolean;
+        };
         token['accessToken'] = u.accessToken;
         token['refreshToken'] = u.refreshToken;
         token['role'] = u.role;
+        token['isEmailVerified'] = u.isEmailVerified ?? false;
         token['accessTokenExpiry'] = getJwtExpiry(u.accessToken ?? '');
         return token;
       }
@@ -76,6 +96,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token['accessToken'] = tokens.accessToken;
         token['refreshToken'] = tokens.refreshToken;
         token['accessTokenExpiry'] = getJwtExpiry(tokens.accessToken);
+        // refresh перевыпускает токен из свежего состояния юзера — обновляем признак
+        // подтверждения, чтобы баннер исчез после верификации без повторного входа.
+        token['isEmailVerified'] = decodeAccessToken(tokens.accessToken)?.emailVerified ?? false;
         delete token['error'];
         return token;
       } catch {
@@ -85,6 +108,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       session.user.id = token.sub ?? '';
       session.user.role = (token['role'] as Role) ?? 'USER';
+      session.user.isEmailVerified = (token['isEmailVerified'] as boolean) ?? false;
       (session as { accessToken?: string }).accessToken = token['accessToken'] as string;
       if (token['error']) {
         session.error = token['error'] as 'RefreshAccessTokenError';

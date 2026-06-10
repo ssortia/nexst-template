@@ -92,7 +92,7 @@ export class AuthService {
   }
 
   async login(user: User) {
-    const tokens = await this.generateTokens(user.id, user.email, user.role);
+    const tokens = await this.generateTokens(user.id, user.email, user.role, user.emailVerified);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }
@@ -108,7 +108,7 @@ export class AuthService {
       throw new ForbiddenException('Access Denied');
     }
 
-    const tokens = await this.generateTokens(user.id, user.email, user.role);
+    const tokens = await this.generateTokens(user.id, user.email, user.role, user.emailVerified);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }
@@ -117,9 +117,9 @@ export class AuthService {
     await this.usersService.updateRefreshToken(userId, null);
   }
 
-  private async generateTokens(userId: string, email: string, role: Role) {
+  private async generateTokens(userId: string, email: string, role: Role, emailVerified: boolean) {
     const env = getEnv();
-    const payload = { sub: userId, email, role };
+    const payload = { sub: userId, email, role, emailVerified };
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
