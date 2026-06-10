@@ -6,9 +6,11 @@ process.env['MAIL_TRANSPORT'] = 'json';
 import { ValidationPipe } from '@nestjs/common';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Logger } from 'nestjs-pino';
 import request from 'supertest';
 
 import { AppModule } from '../src/app.module';
+import { AllExceptionsFilter } from '../src/common/filters/all-exceptions.filter';
 import { MailerService } from '../src/mailer/mailer.service';
 import { PrismaService } from '../src/prisma/prisma.service';
 
@@ -36,7 +38,11 @@ describe('Email flow (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+    // Воспроизводим prod-bootstrap (main.ts), чтобы ошибки шли в едином формате.
+    app.useGlobalFilters(new AllExceptionsFilter(app.get(Logger)));
+    app.useGlobalPipes(
+      new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
+    );
 
     const mailer = app.get(MailerService);
     jest.spyOn(mailer, 'sendVerificationEmail').mockImplementation(async (_to, token) => {
