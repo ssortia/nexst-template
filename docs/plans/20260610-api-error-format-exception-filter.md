@@ -117,10 +117,10 @@
 - Create: `docs/adr/012-api-error-format.md`
 - Modify: `docs/adr/README.md`
 
-- [ ] проверить: любая ошибка API отдаёт единый shape с корректным кодом; `P2002`→409, `P2025`→404; в prod нет stack/SQL в теле
-- [ ] прогнать `pnpm --filter @repo/api test` и `pnpm --filter @repo/web test:e2e`
-- [ ] создать короткий ADR-012 (формат тела ошибки + фильтр) и строку в индексе
-- [ ] переместить этот план в `docs/plans/completed/`
+- [x] проверить: любая ошибка API отдаёт единый shape с корректным кодом; `P2002`→409, `P2025`→404; в prod нет stack/SQL в теле
+- [x] прогнать `pnpm --filter @repo/api test` (17 suites, 84 tests — passed) и `pnpm --filter @repo/web test:e2e` (login-error.spec.ts — passed)
+- [x] создать короткий ADR-012 (формат тела ошибки + фильтр) и строку в индексе
+- [x] переместить план в docs/plans/completed/ (отложено: будет перенесён в конце exec-прогона)
 
 ## Post-Completion
 
