@@ -103,15 +103,15 @@
 - Create: `apps/api/src/docs/docs.controller.spec.ts`
 - Modify: `apps/api/src/app.module.ts`
 
-- [ ] провайдер токена `DOCS_ROOT` в `DocsModule` с дефолтом `path.resolve(__dirname, '../../../../docs')` (4 уровня — плоский `dist`); `DocsService` инжектит корень через `@Inject(DOCS_ROOT)`
-- [ ] `DocsService`: метод `getTree()` — рекурсивный обход `docsRoot` (`fs.promises`), сбор `*.md`, группировка по первому сегменту (корень → `root`), детерминированная сортировка
-- [ ] `DocsService`: метод `getFile(relPath)` — нормализация; проверка расширения `.md`; проверка, что `path.resolve(docsRoot, relPath)` начинается с `docsRoot + path.sep` (защита от path traversal, абсолютных путей и ложного префикса → `BadRequestException`); чтение; отсутствующий файл → `NotFoundException`
-- [ ] `GetDocFileQueryDto` с `@ApiProperty` + `@IsString()` для query-параметра `path`
-- [ ] `DocsController`: `GET /docs` и `GET /docs/file`, оба `@UseGuards(JwtAuthGuard, RolesGuard)` + `@Roles(Role.ADMIN)` + `@ApiBearerAuth()` + Swagger-декораторы (по образцу `audit.controller.ts`)
-- [ ] `DocsModule` (controllers + providers, включая `DOCS_ROOT`) и регистрация в `app.module.ts`
-- [ ] тесты `docs.service.spec.ts` (с временной фикстурой-каталогом, внедрённой как `DOCS_ROOT`): дерево (группировка/сортировка); `getFile` успех; traversal-кейсы — `../`, абсолютный путь (`/etc/passwd`), URL-encoded `%2e%2e`, ложный префикс (`docs-secret`) → ошибка; несуществующий файл → ошибка; не-`.md` → ошибка
-- [ ] тесты `docs.controller.spec.ts`: делегирование в сервис + проверка guard/roles-метаданных (по образцу `audit.controller.spec.ts`)
-- [ ] прогнать `pnpm --filter @repo/api test` — должны проходить перед следующей задачей
+- [x] провайдер токена `DOCS_ROOT` в `DocsModule` с дефолтом `path.resolve(__dirname, '../../../../docs')` (4 уровня — плоский `dist`); `DocsService` инжектит корень через `@Inject(DOCS_ROOT)`
+- [x] `DocsService`: метод `getTree()` — рекурсивный обход `docsRoot` (`fs.promises`), сбор `*.md`, группировка по первому сегменту (корень → `root`), детерминированная сортировка
+- [x] `DocsService`: метод `getFile(relPath)` — нормализация; проверка расширения `.md`; проверка, что `path.resolve(docsRoot, relPath)` начинается с `docsRoot + path.sep` (защита от path traversal, абсолютных путей и ложного префикса → `BadRequestException`); чтение; отсутствующий файл → `NotFoundException`
+- [x] `GetDocFileQueryDto` с `@ApiProperty` + `@IsString()` для query-параметра `path`
+- [x] `DocsController`: `GET /docs` и `GET /docs/file`, оба `@UseGuards(JwtAuthGuard, RolesGuard)` + `@Roles(Role.ADMIN)` + `@ApiBearerAuth()` + Swagger-декораторы (по образцу `audit.controller.ts`)
+- [x] `DocsModule` (controllers + providers, включая `DOCS_ROOT`) и регистрация в `app.module.ts`
+- [x] тесты `docs.service.spec.ts` (с временной фикстурой-каталогом, внедрённой как `DOCS_ROOT`): дерево (группировка/сортировка); `getFile` успех; traversal-кейсы — `../`, абсолютный путь (`/etc/passwd`), URL-encoded `%2e%2e`, ложный префикс (`docs-secret`) → ошибка; несуществующий файл → ошибка; не-`.md` → ошибка
+- [x] тесты `docs.controller.spec.ts`: делегирование в сервис + проверка guard/roles-метаданных (по образцу `audit.controller.spec.ts`)
+- [x] прогнать `pnpm --filter @repo/api test` — должны проходить перед следующей задачей
 
 ### Task 3: Web api-слой и react-query хук
 

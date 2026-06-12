@@ -76,6 +76,9 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
+    "moduleNameMapper": {
+      "^@repo/types$": "<rootDir>/../../../packages/types/src/index.ts"
+    },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
