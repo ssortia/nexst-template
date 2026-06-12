@@ -85,11 +85,11 @@
 - Create: `packages/types/src/docs.ts`
 - Modify: `packages/types/src/index.ts`
 
-- [ ] создать `packages/types/src/docs.ts` с zod-схемами `DocsFileMetaSchema` (`path`, `name`, `group`), `DocsGroupSchema` (`group`, `files: DocsFileMeta[]`), `DocsTreeSchema` (`groups: DocsGroup[]`), `DocsFileContentSchema` (`path`, `content`) и выводимыми типами
-- [ ] добавить реэкспорт `export * from './docs';` в `packages/types/src/index.ts`
-- [ ] написать тест на парсинг схем (валидный объект проходит, невалидный — падает)
-- [ ] собрать пакет: `pnpm --filter @repo/types build`
-- [ ] прогнать тесты — должны проходить перед следующей задачей
+- [x] создать `packages/types/src/docs.ts` с zod-схемами `DocsFileMetaSchema` (`path`, `name`, `group`), `DocsGroupSchema` (`group`, `files: DocsFileMeta[]`), `DocsTreeSchema` (`groups: DocsGroup[]`), `DocsFileContentSchema` (`path`, `content`) и выводимыми типами
+- [x] добавить реэкспорт `export * from './docs';` в `packages/types/src/index.ts`
+- [x] написать тест на парсинг схем (валидный объект проходит, невалидный — падает)
+- [x] собрать пакет: `pnpm --filter @repo/types build` (компиляция проверена через `tsc --outDir` во временный каталог; штатный `dist` принадлежит root — host-сборка падает EACCES, прод-сборка идёт через Docker, см. MEMORY)
+- [x] прогнать тесты — должны проходить перед следующей задачей
 
 ### Task 2: NestJS-модуль `docs` (service + controller + module)
 
