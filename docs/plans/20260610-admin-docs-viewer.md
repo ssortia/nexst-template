@@ -134,11 +134,11 @@
 - Modify: `apps/web/src/components/main-nav.tsx`
 - Modify: `apps/web/package.json`
 
-- [ ] добавить зависимости `react-markdown` и `remark-gfm` в `apps/web/package.json`, установить (`pnpm install`)
-- [ ] `docs-viewer.tsx` (client): дерево файлов слева (группы `adr`/`guides`/`plans`/`root`), выбранный файл рендерится `react-markdown` + `remark-gfm`; состояния загрузки/ошибки/пусто
-- [ ] `page.tsx`: серверная обёртка, рендерящая `DocsViewer` (роль уже проверена в `admin/layout.tsx`)
-- [ ] добавить строку `{ label: 'Документация', href: '/admin/docs', roles: ['ADMIN'] }` в `NAV_LINKS` (`main-nav.tsx`)
-- [ ] `pnpm typecheck` и `pnpm lint` — без ошибок перед следующей задачей
+- [x] добавить зависимости `react-markdown` и `remark-gfm` в `apps/web/package.json`, установить (`pnpm install`)
+- [x] `docs-viewer.tsx` (client): дерево файлов слева (группы `adr`/`guides`/`plans`/`root`), выбранный файл рендерится `react-markdown` + `remark-gfm`; состояния загрузки/ошибки/пусто
+- [x] `page.tsx`: серверная обёртка, рендерящая `DocsViewer` (роль уже проверена в `admin/layout.tsx`)
+- [x] добавить строку `{ label: 'Документация', href: '/admin/docs', roles: ['ADMIN'] }` в `NAV_LINKS` (`main-nav.tsx`)
+- [x] `pnpm typecheck` и `pnpm lint` — без ошибок перед следующей задачей
 
 ### Task 5: Копирование `docs/` в Docker-образ api
 
