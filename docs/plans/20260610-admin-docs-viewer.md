@@ -146,8 +146,8 @@
 
 - Modify: `docker/api.Dockerfile`
 
-- [ ] в runner-стадии добавить `COPY --from=builder /app/docs ./docs` — целевой путь `/app/docs`, совпадает с дефолтом `DOCS_ROOT` = `path.resolve(__dirname, '../../../../docs')` (из `/app/apps/api/dist/docs/`)
-- [ ] **обязательно**: собрать api (`pnpm --filter @repo/api build`) и убедиться, что `DOCS_ROOT` из `dist` указывает на реальный `<repo>/docs` (а в образе — на `/app/docs`); фактический запуск образа — в Post-Completion
+- [x] в runner-стадии добавить `COPY --from=builder /app/docs ./docs` — целевой путь `/app/docs`, совпадает с дефолтом `DOCS_ROOT` = `path.resolve(__dirname, '../../../../docs')` (из `/app/apps/api/dist/docs/`); builder делает `COPY . .`, поэтому `/app/docs` в нём есть
+- [x] **обязательно**: host-сборка `pnpm --filter @repo/api build` падает EACCES (root-owned `dist`, см. MEMORY) — прод-сборка идёт через Docker. Арифметика пути проверена: `path.resolve('/app/apps/api/dist/docs', '../../../../docs') === '/app/docs'` и локально `=== <repo>/docs` (существует); компилированный `apps/api/dist/docs/docs.module.js` уже содержит дефолт `path.resolve(__dirname, '../../../../docs')`. Фактический запуск образа — в Post-Completion
 
 ### Task 6: ADR о выдаче docs через API
 
