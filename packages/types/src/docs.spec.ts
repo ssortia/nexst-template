@@ -1,4 +1,4 @@
-import { DocsFileContentSchema, DocsFileMetaSchema, DocsTreeSchema } from './docs';
+import { DocsFileContentSchema, DocsFileMetaSchema, DocsGroupSchema, DocsTreeSchema } from './docs';
 
 describe('docs schemas', () => {
   it('DocsFileMetaSchema принимает валидный объект', () => {
@@ -12,6 +12,18 @@ describe('docs schemas', () => {
 
   it('DocsFileMetaSchema падает при отсутствии обязательного поля', () => {
     expect(() => DocsFileMetaSchema.parse({ path: 'a.md', name: 'a.md' })).toThrow();
+  });
+
+  it('DocsGroupSchema принимает группу с файлами', () => {
+    const group = {
+      group: 'guides',
+      files: [{ path: 'guides/x.md', name: 'x.md', group: 'guides' }],
+    };
+    expect(DocsGroupSchema.parse(group)).toEqual(group);
+  });
+
+  it('DocsGroupSchema падает при отсутствии group', () => {
+    expect(() => DocsGroupSchema.parse({ files: [] })).toThrow();
   });
 
   it('DocsTreeSchema принимает дерево с группами', () => {

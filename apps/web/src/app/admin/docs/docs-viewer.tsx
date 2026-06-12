@@ -50,6 +50,15 @@ const markdownComponents: React.ComponentProps<typeof ReactMarkdown>['components
   hr: ({ ...props }) => <hr className="border-input my-6" {...props} />,
 };
 
+// Для вложенных файлов (group/sub/.../name) показываем под-путь внутри группы,
+// иначе одинаковые basename в разных подкаталогах визуально неразличимы.
+function fileLabel(filePath: string, name: string, group: string): string {
+  const withoutGroup = filePath.startsWith(`${group}/`)
+    ? filePath.slice(group.length + 1)
+    : filePath;
+  return withoutGroup === name ? name : withoutGroup;
+}
+
 function FileTree({
   groups,
   selectedPath,
@@ -77,7 +86,7 @@ function FileTree({
                   }`}
                   title={file.path}
                 >
-                  {file.name}
+                  {fileLabel(file.path, file.name, group.group)}
                 </button>
               </li>
             ))}

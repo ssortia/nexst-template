@@ -90,6 +90,7 @@ apps/
   web/          # Next.js 15 (App Router, next-auth v5, shadcn/ui)
 packages/
   types/        # Общие Zod-схемы и TypeScript-типы
+  utils/        # Общие утилиты (capitalize и т.п.)
   config/
     eslint/     # ESLint flat config (base, nestjs, nextjs)
     typescript/ # tsconfig базы (base, nestjs, nextjs)

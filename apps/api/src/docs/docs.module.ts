@@ -1,10 +1,8 @@
-import * as path from 'node:path';
-
 import { Module } from '@nestjs/common';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
 
-import { DOCS_ROOT } from './docs.constants';
+import { DEFAULT_DOCS_ROOT, DOCS_ROOT } from './docs.constants';
 import { DocsController } from './docs.controller';
 import { DocsService } from './docs.service';
 
@@ -14,9 +12,8 @@ import { DocsService } from './docs.service';
     RolesGuard,
     DocsService,
     // Корень docs внедряется через токен, чтобы тесты задавали путь к фикстурам,
-    // а не зависели от __dirname. SWC даёт плоский dist (dist/docs/docs.module.js),
-    // поэтому до корня монорепо ровно 4 уровня вверх → <repo>/docs (в образе → /app/docs).
-    { provide: DOCS_ROOT, useValue: path.resolve(__dirname, '../../../../docs') },
+    // а не зависели от __dirname (дефолт — DEFAULT_DOCS_ROOT рядом с токеном).
+    { provide: DOCS_ROOT, useValue: DEFAULT_DOCS_ROOT },
   ],
 })
 export class DocsModule {}

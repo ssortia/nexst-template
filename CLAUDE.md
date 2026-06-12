@@ -71,7 +71,7 @@ docker compose down
 
 - `apps/api` — NestJS backend (Fastify, SWC, JWT auth, Swagger)
 - `apps/web` — Next.js 15 frontend (App Router, next-auth v5, shadcn/ui)
-- `packages/` — общие пакеты: `ui`, `types`, `config/{eslint,typescript,prettier}`
+- `packages/` — общие пакеты: `ui`, `types`, `utils`, `config/{eslint,typescript,prettier}`
 - `docker/` — Dockerfile-ы и nginx.conf
 - `.github/workflows/ci.yml` — CI: lint → typecheck → test → build
 

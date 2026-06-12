@@ -20,7 +20,7 @@ export class DocsService {
       const segments = relPath.split(path.sep);
       const group = segments.length > 1 ? segments[0]! : ROOT_GROUP;
       const meta: DocsFileMeta = {
-        path: relPath.split(path.sep).join('/'), // наружу всегда POSIX-разделитель
+        path: segments.join('/'), // наружу всегда POSIX-разделитель
         name: path.basename(relPath),
         group,
       };
@@ -40,7 +40,9 @@ export class DocsService {
   }
 
   async getFile(relPath: string): Promise<DocsFileContent> {
-    const normalized = path.normalize(decodeURIComponent(relPath));
+    // Fastify уже декодирует query-параметры, повторный decodeURIComponent здесь
+    // лишний и падал бы URIError→500 на битом percent-encoding (?path=%zz).
+    const normalized = path.normalize(relPath);
 
     if (path.extname(normalized).toLowerCase() !== '.md') {
       throw new BadRequestException('Допустимы только .md файлы');
@@ -53,12 +55,22 @@ export class DocsService {
       throw new BadRequestException('Недопустимый путь');
     }
 
+    let content: string;
+    let realPath: string;
     try {
-      const content = await fs.readFile(absolute, 'utf-8');
-      return { path: normalized.split(path.sep).join('/'), content };
+      content = await fs.readFile(absolute, 'utf-8');
+      // realpath отдельно: symlink внутри docs/ мог бы указывать наружу корня.
+      realPath = await fs.realpath(absolute);
     } catch {
       throw new NotFoundException('Файл не найден');
     }
+
+    const realRoot = await fs.realpath(this.docsRoot);
+    if (!realPath.startsWith(realRoot + path.sep)) {
+      throw new BadRequestException('Недопустимый путь');
+    }
+
+    return { path: normalized.split(path.sep).join('/'), content };
   }
 
   private async collectMarkdown(dir: string, relDir: string): Promise<string[]> {
