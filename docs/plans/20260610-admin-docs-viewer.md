@@ -120,10 +120,10 @@
 - Create: `apps/web/src/api/docs.api.ts`
 - Create: `apps/web/src/hooks/use-docs.ts`
 
-- [ ] `docs.api.ts`: `docsApi.tree(accessToken)` → `api.get<DocsTree>('/docs')` и `docsApi.file(accessToken, path)` → `api.get<DocsFileContent>('/docs/file', { params: { path } })`; реэкспорт типов из `@repo/types`
-- [ ] `use-docs.ts`: `useDocsTree()` и `useDocFile(path)` на react-query + `useSession` (ключи включают `path`, `enabled` по `accessToken` и наличию `path`) — по образцу `use-audit.ts`
-- [ ] unit-тесты не пишем: на web нет jest/vitest — покрытие через `pnpm typecheck` + `pnpm lint` (как у существующих `audit.api.ts`/`use-audit.ts`)
-- [ ] `pnpm typecheck` и `pnpm lint` — без ошибок перед следующей задачей
+- [x] `docs.api.ts`: `docsApi.tree(accessToken)` → `api.get<DocsTree>('/docs')` и `docsApi.file(accessToken, path)` → `api.get<DocsFileContent>('/docs/file', { params: { path } })`; реэкспорт типов из `@repo/types`
+- [x] `use-docs.ts`: `useDocsTree()` и `useDocFile(path)` на react-query + `useSession` (ключи включают `path`, `enabled` по `accessToken` и наличию `path`) — по образцу `use-audit.ts`
+- [x] unit-тесты не пишем: на web нет jest/vitest — покрытие через `pnpm typecheck` + `pnpm lint` (как у существующих `audit.api.ts`/`use-audit.ts`)
+- [x] `pnpm typecheck` и `pnpm lint` — без ошибок перед следующей задачей
 
 ### Task 4: Страница `/admin/docs` с навигацией и рендером Markdown
 
