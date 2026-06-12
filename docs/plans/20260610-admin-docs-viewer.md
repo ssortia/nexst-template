@@ -156,8 +156,8 @@
 - Create: `docs/adr/013-docs-viewer-api.md`
 - Modify: `docs/adr/README.md`
 
-- [ ] написать ADR-013 по шаблону `docs/adr/README.md`: контекст, решение (источник — API-модуль, RBAC ADMIN, защита от path traversal, детерминированный путь + COPY в образ), последствия
-- [ ] добавить строку ADR-013 в индекс `docs/adr/README.md`
+- [x] написать ADR-013 по шаблону `docs/adr/README.md`: контекст, решение (источник — API-модуль, RBAC ADMIN, защита от path traversal, детерминированный путь + COPY в образ), последствия
+- [x] добавить строку ADR-013 в индекс `docs/adr/README.md`
 
 ### Task 7: Документация (guides/README)
 
