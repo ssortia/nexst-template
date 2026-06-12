@@ -166,8 +166,8 @@
 - Modify: `README.md`
 - Modify: `CLAUDE.md` (раздел Architecture Decisions, при необходимости)
 
-- [ ] обновить список фич в `README.md` (добавить раздел просмотра docs в админке)
-- [ ] при необходимости добавить ссылку на модуль `docs` и ADR-013 в `CLAUDE.md`
+- [x] обновить список фич в `README.md` (добавить раздел просмотра docs в админке)
+- [x] при необходимости добавить ссылку на модуль `docs` и ADR-013 в `CLAUDE.md`
 
 ### Task 8: Проверка acceptance criteria
 

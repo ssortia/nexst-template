@@ -86,10 +86,11 @@ docker compose down
 - Health check at `/health`
 - Structured logging via `nestjs-pino`
 - Env validation via `zod` at startup
-- Module structure: `auth`, `users`, `prisma`, `audit`, `mailer`, `verification` (core modules pre-configured)
+- Module structure: `auth`, `users`, `prisma`, `audit`, `mailer`, `verification`, `docs` (core modules pre-configured)
 - Audit logging: declarative `@Audit(...)` decorator on controller handlers + a global `AuditInterceptor` (see ADR-010 and `docs/guides/adding-audit-event.md`)
 - Email flow: email verification + password reset on one-time tokens (`mailer` module over nodemailer with transport-by-env, `verification` token table, `VerifiedGuard`) — see ADR-011 and `docs/guides/email-verification-and-password-reset.md`
 - Error format: global `AllExceptionsFilter` (`common/filters/`) normalizes every error source to a single `ApiErrorBody` shape `{ statusCode, message, details? }` (HttpException, validation, Prisma `P2002`→409/`P2025`→404, unknown→500 without leaking internals) — see ADR-012
+- Docs viewer: `docs` module serves the repo's `docs/` Markdown (tree + file content) for an admin-only `/admin/docs` section (ADMIN RBAC via `RolesGuard`, path-traversal protected, `docs/` shipped into the image) — see ADR-013
 
 ### Web (`apps/web`)
 
