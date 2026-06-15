@@ -26,6 +26,9 @@ services:
       - .:/app
       - /app/node_modules
       - /app/apps/api/node_modules
+      # Каталоги сборки держим в volume контейнера, чтобы он не писал их на хост от root
+      - /app/apps/api/dist
+      - /app/packages/types/dist
     ports:
       - '3001:3001'
     # Значения ниже имеют приоритет над env_file: фиксируют docker-сетевые адреса
@@ -49,6 +52,9 @@ services:
       - .:/app
       - /app/node_modules
       - /app/apps/web/node_modules
+      # Каталоги сборки держим в volume контейнера, чтобы он не писал их на хост от root
+      - /app/apps/web/.next
+      - /app/packages/types/dist
     ports:
       - '3000:3000'
     environment:

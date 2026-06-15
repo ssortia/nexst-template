@@ -28,6 +28,8 @@ ENV NODE_ENV=production
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
+# Документация нужна в рантайме: DocsService читает /app/docs (DOCS_ROOT)
+COPY --from=builder /app/docs ./docs
 
 EXPOSE 3001
 CMD ["node", "apps/api/dist/main"]

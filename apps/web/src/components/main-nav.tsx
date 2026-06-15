@@ -13,6 +13,7 @@ interface NavLink {
 const NAV_LINKS: NavLink[] = [
   { label: 'Пользователи', href: '/admin/users', roles: ['ADMIN'] },
   { label: 'Аудит', href: '/admin/audit', roles: ['ADMIN'] },
+  { label: 'Документация', href: '/admin/docs', roles: ['ADMIN'] },
 ];
 
 /** Навигация приложения: показывает только пункты, доступные текущей роли. */

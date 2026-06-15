@@ -12,6 +12,7 @@
 - **Верификация email и сброс пароля** — одноразовые токены (хэш + TTL), `VerifiedGuard`; mailer на nodemailer с транспортом по env (json в dev без SMTP, smtp в prod); на web — страницы `/verify-email`, `/forgot-password`, `/reset-password` и баннер о неподтверждённом email
 - **Аудит-лог** — автоматическая фиксация действий через декоратор `@Audit` + глобальный interceptor, просмотр журнала на web с фильтрами (только ADMIN)
 - **Единый формат ошибок API** — глобальный `AllExceptionsFilter` приводит любой источник ошибки к одному shape `{ statusCode, message, details? }` (валидация, Prisma `P2002`→409/`P2025`→404, неизвестные → 500 без утечки деталей); на web `ApiError` парсит этот формат
+- **Просмотр документации в админке** — раздел `/admin/docs` (только ADMIN) показывает дерево Markdown-файлов из `docs/` (ADR/гайды/планы) и рендерит выбранный файл; API-модуль `docs` отдаёт дерево и содержимое с защитой от path traversal, `docs/` поставляется в образ
 - **Web** — Next.js 15 App Router с защищёнными маршрутами через next-auth v5
 - **UI** — shadcn/ui компоненты в `apps/web/src/components/ui` на Tailwind CSS v4
 - **Тёмная тема** — next-themes с переключателем в хедере, сохранение в localStorage, поддержка системных настроек
@@ -89,6 +90,7 @@ apps/
   web/          # Next.js 15 (App Router, next-auth v5, shadcn/ui)
 packages/
   types/        # Общие Zod-схемы и TypeScript-типы
+  utils/        # Общие утилиты (capitalize и т.п.)
   config/
     eslint/     # ESLint flat config (base, nestjs, nextjs)
     typescript/ # tsconfig базы (base, nestjs, nextjs)
