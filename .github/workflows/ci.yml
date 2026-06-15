@@ -21,8 +21,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "pnpm"
+          node-version: '20'
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -41,3 +41,7 @@ jobs:
 
       - name: Build
         run: pnpm build
+        env:
+          # Сборка @repo/web валидирует env через @t3-oss/env-nextjs;
+          # NEXTAUTH_SECRET обязателен (min 32 символа) — задаём фиктивное значение для CI-сборки.
+          NEXTAUTH_SECRET: ci-build-dummy-secret-0123456789abcdef

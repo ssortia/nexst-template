@@ -9,6 +9,6 @@
         "swcrcPath": ".swcrc"
       }
     },
-    "deleteOutDir": true
+    "deleteOutDir": false
   }
 }
