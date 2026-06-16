@@ -30,6 +30,9 @@ COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 # Документация нужна в рантайме: DocsService читает /app/docs (DOCS_ROOT)
 COPY --from=builder /app/docs ./docs
+COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
+COPY docker/api.entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
 
 EXPOSE 3001
-CMD ["node", "apps/api/dist/main"]
+ENTRYPOINT ["./entrypoint.sh"]
