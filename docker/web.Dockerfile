@@ -17,6 +17,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
 COPY --from=deps /app/packages/types/node_modules ./packages/types/node_modules
+COPY --from=deps /app/packages/utils/node_modules ./packages/utils/node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 # NEXT_PUBLIC_* переменные вшиваются в бандл на этапе сборки
