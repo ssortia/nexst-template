@@ -33,12 +33,12 @@
 
 - Modify: `docker/nginx.conf`
 
-- [ ] Убрать блок `events {}` и обёртку `http {}`
-- [ ] Убрать блоки `upstream` (системный nginx обращается к `127.0.0.1:3000` и `127.0.0.1:3001` напрямую)
-- [ ] Оставить два `server {}` блока: HTTP-редирект и HTTPS с proxy_pass на localhost-порты
-- [ ] Заменить `proxy_pass http://api/` → `proxy_pass http://127.0.0.1:3001/`
-- [ ] Заменить `proxy_pass http://web` → `proxy_pass http://127.0.0.1:3000`
-- [ ] Домен оставить как плейсхолдер `app.example.com`
+- [x] Убрать блок `events {}` и обёртку `http {}`
+- [x] Убрать блоки `upstream` (системный nginx обращается к `127.0.0.1:3000` и `127.0.0.1:3001` напрямую)
+- [x] Оставить два `server {}` блока: HTTP-редирект и HTTPS с proxy_pass на localhost-порты
+- [x] Заменить `proxy_pass http://api/` → `proxy_pass http://127.0.0.1:3001/`
+- [x] Заменить `proxy_pass http://web` → `proxy_pass http://127.0.0.1:3000`
+- [x] Домен оставить как плейсхолдер `app.example.com`
 
 ### Task 2: Обновить docker-compose.prod.yml
 
