@@ -20,6 +20,8 @@ COPY --from=deps /app/packages/types/node_modules ./packages/types/node_modules
 COPY --from=deps /app/packages/utils/node_modules ./packages/utils/node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# Runtime-секреты недоступны при сборке — пропускаем валидацию env
+ENV SKIP_ENV_VALIDATION=1
 # NEXT_PUBLIC_* переменные вшиваются в бандл на этапе сборки
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL

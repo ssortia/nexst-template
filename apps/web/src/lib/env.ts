@@ -2,6 +2,7 @@ import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
 export const env = createEnv({
+  skipValidation: !!process.env['SKIP_ENV_VALIDATION'],
   server: {
     API_URL: z.string().url().default('http://localhost:3001'),
     NEXTAUTH_SECRET: z.string().min(32),
