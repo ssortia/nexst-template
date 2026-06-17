@@ -57,10 +57,10 @@
 
 - Modify: `docs/guides/deployment.md`
 
-- [ ] Шаг 4 (nginx.conf): уточнить, что файл копируется как virtual host в `/etc/nginx/sites-available/`
-- [ ] Шаг 5 (подготовить сервер): убрать `scp -r docker/`, оставить только `scp docker-compose.prod.yml`; добавить команды подключения virtual host и перезагрузки nginx
-- [ ] Добавить шаг установки системного nginx (если не установлен)
-- [ ] Обновить раздел "Частые проблемы": убрать строку про certbot/nginx на порту 80
+- [x] Шаг 4 (nginx.conf): уточнить, что файл копируется как virtual host в `/etc/nginx/sites-available/`
+- [x] Шаг 5 (подготовить сервер): убрать `scp -r docker/`, оставить только `scp docker-compose.prod.yml`; добавить команды подключения virtual host и перезагрузки nginx
+- [x] Добавить шаг установки системного nginx (если не установлен)
+- [x] Обновить раздел "Частые проблемы": убрать строку про certbot/nginx на порту 80
 
 ### Task 4: Verify acceptance criteria
 

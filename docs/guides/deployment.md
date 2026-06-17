@@ -37,18 +37,29 @@ app.example.com → IP-адрес сервера
 ```bash
 sudo apt install certbot
 
-# Порт 80 должен быть свободен
+# Порт 80 должен быть свободен (systemd-занятые порты проверить: ss -tlnp | grep :80)
 sudo certbot certonly --standalone -d app.example.com
 ```
 
 Сертификаты сохранятся в `/etc/letsencrypt/live/app.example.com/` — nginx монтирует эту директорию автоматически. Автопродление через `certbot.timer` настраивается при установке.
 
-### 4. Настроить nginx.conf
-
-Замени `app.example.com` на свой домен (4 вхождения):
+### 4. Установить системный nginx и подключить virtual host
 
 ```bash
-sed -i 's/app.example.com/your.domain.com/g' docker/nginx.conf
+# Установить nginx если не установлен
+sudo apt install nginx
+
+# Скопировать конфиг virtual host на сервер
+scp docker/nginx.conf user@server:/etc/nginx/sites-available/nexst
+
+# Заменить плейсхолдер на реальный домен
+sudo sed -i 's/app.example.com/your.domain.com/g' /etc/nginx/sites-available/nexst
+
+# Подключить virtual host
+sudo ln -s /etc/nginx/sites-available/nexst /etc/nginx/sites-enabled/nexst
+
+# Проверить конфиг и перезагрузить nginx
+sudo nginx -t && sudo systemctl reload nginx
 ```
 
 ### 5. Подготовить сервер
@@ -56,9 +67,8 @@ sed -i 's/app.example.com/your.domain.com/g' docker/nginx.conf
 ```bash
 sudo mkdir -p /opt/nexst && sudo chown $USER:$USER /opt/nexst
 
-# Скопировать файлы на сервер
+# Скопировать docker-compose на сервер
 scp docker-compose.prod.yml user@server:/opt/nexst/
-scp -r docker/ user@server:/opt/nexst/docker/
 ```
 
 ### 6. Переменные окружения
