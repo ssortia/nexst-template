@@ -47,17 +47,28 @@ sudo certbot certonly --standalone -d app.example.com
 Сертификаты сохранятся в `/etc/letsencrypt/live/app.example.com/` — nginx читает их напрямую по этому пути. Автопродление через `certbot.timer` настраивается при установке; чтобы nginx подхватывал обновлённые сертификаты, добавь deploy-hook:
 
 ```bash
-echo 'deploy-hook = systemctl reload nginx' | sudo tee /etc/letsencrypt/renewal/app.example.com.conf.d/reload-nginx.conf
+sudo tee /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh << 'EOF'
+#!/bin/bash
+systemctl reload nginx
+EOF
+sudo chmod +x /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh
 ```
 
 ### 4. Установить системный nginx и подключить virtual host
 
 ```bash
-# Установить nginx если не установлен
+# На сервере — установить nginx если не установлен
 sudo apt install nginx
+```
 
-# Скопировать конфиг virtual host на сервер
-scp docker/nginx.conf user@server:/etc/nginx/sites-available/nexst
+```bash
+# Локально — скопировать конфиг virtual host во временную директорию на сервере
+scp docker/nginx.conf user@server:/tmp/nexst-nginx
+```
+
+```bash
+# На сервере — установить конфиг и подключить virtual host
+sudo mv /tmp/nexst-nginx /etc/nginx/sites-available/nexst
 
 # Заменить плейсхолдер на реальный домен
 sudo sed -i 's/app.example.com/your.domain.com/g' /etc/nginx/sites-available/nexst
