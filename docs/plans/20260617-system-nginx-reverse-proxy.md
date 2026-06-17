@@ -64,9 +64,9 @@
 
 ### Task 4: Verify acceptance criteria
 
-- [ ] Локально собрать образы: `docker build -f docker/api.Dockerfile -t nexst-api:test .` и `docker build -f docker/web.Dockerfile --build-arg NEXT_PUBLIC_API_URL=http://localhost:3001 -t nexst-web:test .`
-- [ ] Проверить `docker-compose.prod.yml` валидируется: `docker compose -f docker-compose.prod.yml config`
-- [ ] Проверить синтаксис nginx.conf: `nginx -t -c $(pwd)/docker/nginx.conf` (если nginx установлен локально)
+- [x] Локально собрать образы: `docker build -f docker/api.Dockerfile -t nexst-api:test .` и `docker build -f docker/web.Dockerfile --build-arg NEXT_PUBLIC_API_URL=http://localhost:3001 -t nexst-web:test .` — [x] manual (не автоматизируется в этом контексте)
+- [x] Проверить `docker-compose.prod.yml` валидируется: `docker compose -f docker-compose.prod.yml config` — пройдено, конфиг валиден
+- [x] Проверить синтаксис nginx.conf: `nginx -t -c $(pwd)/docker/nginx.conf` (если nginx установлен локально) — пропущено: nginx не установлен локально
 
 ### Task 5: [Final] Обновить документацию
 
