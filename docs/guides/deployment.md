@@ -37,11 +37,18 @@ app.example.com → IP-адрес сервера
 ```bash
 sudo apt install certbot
 
-# Порт 80 должен быть свободен (systemd-занятые порты проверить: ss -tlnp | grep :80)
+# Если nginx уже запущен — остановить, иначе certbot --standalone не займёт порт 80
+sudo systemctl stop nginx
+
+# Порт 80 должен быть свободен (проверить: ss -tlnp | grep :80)
 sudo certbot certonly --standalone -d app.example.com
 ```
 
-Сертификаты сохранятся в `/etc/letsencrypt/live/app.example.com/` — nginx монтирует эту директорию автоматически. Автопродление через `certbot.timer` настраивается при установке.
+Сертификаты сохранятся в `/etc/letsencrypt/live/app.example.com/` — nginx читает их напрямую по этому пути. Автопродление через `certbot.timer` настраивается при установке; чтобы nginx подхватывал обновлённые сертификаты, добавь deploy-hook:
+
+```bash
+echo 'deploy-hook = systemctl reload nginx' | sudo tee /etc/letsencrypt/renewal/app.example.com.conf.d/reload-nginx.conf
+```
 
 ### 4. Установить системный nginx и подключить virtual host
 
@@ -58,8 +65,11 @@ sudo sed -i 's/app.example.com/your.domain.com/g' /etc/nginx/sites-available/nex
 # Подключить virtual host
 sudo ln -s /etc/nginx/sites-available/nexst /etc/nginx/sites-enabled/nexst
 
-# Проверить конфиг и перезагрузить nginx
-sudo nginx -t && sudo systemctl reload nginx
+# Включить автозапуск при перезагрузке сервера
+sudo systemctl enable nginx
+
+# Проверить конфиг и запустить nginx
+sudo nginx -t && sudo systemctl start nginx
 ```
 
 ### 5. Подготовить сервер
