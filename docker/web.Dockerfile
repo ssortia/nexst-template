@@ -7,6 +7,7 @@ WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY apps/web/package.json ./apps/web/
 COPY packages/types/package.json ./packages/types/
+COPY packages/utils/package.json ./packages/utils/
 COPY packages/config/typescript/package.json ./packages/config/typescript/
 RUN pnpm install --frozen-lockfile
 
@@ -22,6 +23,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 RUN pnpm --filter @repo/types build
+RUN pnpm --filter @repo/utils build
 RUN pnpm --filter @repo/web build
 
 # ---- runner stage ----

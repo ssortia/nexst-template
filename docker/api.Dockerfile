@@ -7,6 +7,7 @@ WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/types/package.json ./packages/types/
+COPY packages/utils/package.json ./packages/utils/
 COPY packages/config/typescript/package.json ./packages/config/typescript/
 RUN pnpm install --frozen-lockfile
 
@@ -18,6 +19,7 @@ COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=deps /app/packages/types/node_modules ./packages/types/node_modules
 COPY . .
 RUN pnpm --filter @repo/types build
+RUN pnpm --filter @repo/utils build
 RUN pnpm --filter @repo/api db:generate
 RUN pnpm --filter @repo/api build
 
