@@ -49,6 +49,8 @@ services:
       WEB_URL: ${WEB_URL}
       EMAIL_VERIFICATION_TTL: ${EMAIL_VERIFICATION_TTL:-24h}
       PASSWORD_RESET_TTL: ${PASSWORD_RESET_TTL:-1h}
+    ports:
+      - '127.0.0.1:3001:3001'
     depends_on:
       db:
         condition: service_healthy
@@ -64,21 +66,10 @@ services:
       NEXTAUTH_URL: ${NEXTAUTH_URL}
       # NEXT_PUBLIC_API_URL вшивается в JS-бандл при сборке образа — изменить здесь нельзя без пересборки
       API_URL: http://api:3001
-    depends_on:
-      - api
-
-  nginx:
-    image: nginx:alpine
-    restart: always
     ports:
-      - '80:80'
-      - '443:443'
-    volumes:
-      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - '127.0.0.1:3000:3000'
     depends_on:
       - api
-      - web
 
 volumes:
   postgres_data:
