@@ -63,27 +63,33 @@ scp -r docker/ user@server:/opt/nexst/docker/
 
 ### 6. Переменные окружения
 
-Создай `/opt/nexst/.env` на сервере. Никогда не коммить этот файл.
+Скопируй `.env.example` на сервер как стартовую точку и заполни значения.
 
-```env
-# База данных
-POSTGRES_USER=nexst
-POSTGRES_PASSWORD=<сложный пароль>
-POSTGRES_DB=nexst_prod
-
-# Redis — openssl rand -base64 32
-REDIS_PASSWORD=<сложный пароль>
-
-# JWT — openssl rand -base64 64
-JWT_SECRET=<минимум 64 символа>
-JWT_REFRESH_SECRET=<другая строка, минимум 64 символа>
-JWT_EXPIRES_IN=15m
-JWT_REFRESH_EXPIRES_IN=7d
-
-# NextAuth — openssl rand -base64 64
-NEXTAUTH_SECRET=<минимум 64 символа>
-NEXTAUTH_URL=https://app.example.com
+```bash
+# Локально — скопировать шаблон на сервер
+scp .env.example user@server:/opt/nexst/.env
 ```
+
+Сгенерируй секреты заранее (каждую команду — отдельно для каждой переменной):
+
+```bash
+openssl rand -base64 32   # POSTGRES_PASSWORD, REDIS_PASSWORD (44 символа, одна строка)
+openssl rand -base64 48   # JWT_SECRET, JWT_REFRESH_SECRET, NEXTAUTH_SECRET (64 символа, одна строка)
+```
+
+Затем на сервере отредактируй файл (`nano /opt/nexst/.env`) и вставь сгенерированные значения:
+
+| Переменная            | Значение                           |
+| --------------------- | ---------------------------------- |
+| `POSTGRES_PASSWORD`   | сгенерированная строка (base64 32) |
+| `REDIS_PASSWORD`      | сгенерированная строка (base64 32) |
+| `JWT_SECRET`          | сгенерированная строка (base64 48) |
+| `JWT_REFRESH_SECRET`  | другая сгенерированная строка      |
+| `NEXTAUTH_SECRET`     | сгенерированная строка (base64 48) |
+| `NEXTAUTH_URL`        | `https://your.domain.com`          |
+| `WEB_URL`             | `https://your.domain.com`          |
+| `MAIL_FROM`           | адрес отправителя писем            |
+| `SMTP_HOST/USER/PASS` | реквизиты SMTP-сервера             |
 
 > `NEXT_PUBLIC_API_URL` задаётся в GitHub Secrets и вшивается в JS-бандл при сборке образа. Изменить его без пересборки (нового Release) нельзя.
 
