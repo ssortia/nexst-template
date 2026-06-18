@@ -2,6 +2,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -18,6 +19,8 @@ import { TestTokenStore } from './test-token.store';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
@@ -70,7 +73,13 @@ export class AuthService {
   private async sendVerificationEmail(userId: string, email: string): Promise<void> {
     const token = await this.verificationService.issue(userId, 'EMAIL_VERIFICATION');
     this.testTokenStore.record(email, 'EMAIL_VERIFICATION', token);
-    await this.mailerService.sendVerificationEmail(email, token);
+    try {
+      await this.mailerService.sendVerificationEmail(email, token);
+    } catch (err) {
+      // Ошибка SMTP не должна блокировать регистрацию — пользователь может
+      // запросить повторную отправку через /auth/resend-verification.
+      this.logger.error({ err, email }, 'Failed to send verification email');
+    }
   }
 
   /**
@@ -82,7 +91,11 @@ export class AuthService {
     if (user) {
       const token = await this.verificationService.issue(user.id, 'PASSWORD_RESET');
       this.testTokenStore.record(user.email, 'PASSWORD_RESET', token);
-      await this.mailerService.sendPasswordResetEmail(user.email, token);
+      try {
+        await this.mailerService.sendPasswordResetEmail(user.email, token);
+      } catch (err) {
+        this.logger.error({ err, email }, 'Failed to send password reset email');
+      }
     }
   }
 
